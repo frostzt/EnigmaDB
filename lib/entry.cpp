@@ -3,11 +3,3 @@
 //
 
 #include "entry.hpp"
-
-bool Entry::operator<(const Entry &other) const {
-    return primaryKey_ < other.primaryKey_;
-}
-
-bool Entry::operator==(const Entry &other) const {
-    return primaryKey_ == other.primaryKey_;
-}

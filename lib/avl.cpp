@@ -23,6 +23,11 @@ int Node<T>::getBalance(const std::unique_ptr<Node<T> > &node) {
 }
 
 template<typename T>
+void BinarySearchTree<T>::clear() {
+    _root = nullptr;
+}
+
+template<typename T>
 void BinarySearchTree<T>::rotateLeft(std::unique_ptr<Node<T> > &node) {
     const auto oldNode = node.get();
 
@@ -75,6 +80,8 @@ void BinarySearchTree<T>::remove(std::unique_ptr<Node<T> > &root, const T &key) 
             root->key = successor->key;
             remove(root->right, successor->key);
         }
+
+        size_--;
     }
 
     if (!root) return;
@@ -113,12 +120,14 @@ void BinarySearchTree<T>::insert(const T &key) {
 template<typename T>
 void BinarySearchTree<T>::insert(std::unique_ptr<Node<T> > &root, const T &key) {
     if (root == nullptr) {
+        size_++;
         root = std::make_unique<Node<T> >(key);
         return;
     }
 
     // Prevent duplicate insert
     if (root->key == key) {
+        root->key = key;
         return;
     }
 
@@ -148,6 +157,27 @@ void BinarySearchTree<T>::insert(std::unique_ptr<Node<T> > &root, const T &key) 
         }
     }
 }
+
+template<typename T>
+void BinarySearchTree<T>::inOrderIntoVector(std::unique_ptr<Node<T> > &root, std::vector<T> &_v) const {
+    if (root == nullptr) {
+        return;
+    }
+
+    inOrderIntoVector(root->left);
+    _v.push_back(root->key);
+    inOrderIntoVector(root->right);
+}
+
+template<typename T>
+std::vector<T> BinarySearchTree<T>::toSortedVector() const {
+    std::vector<T> data;
+    data.reserve(size_);
+
+    inOrderIntoVector(_root, data);
+    return data;
+}
+
 
 template<typename T>
 void BinarySearchTree<T>::inorder() const {
@@ -224,26 +254,6 @@ const std::unique_ptr<Node<T> > &BinarySearchTree<T>::findRightMost(const std::u
 template<typename T>
 void BinarySearchTree<T>::printTree() const {
     printTree(_root, 0);
-}
-
-template<typename T>
-void BinarySearchTree<T>::printTree(const std::unique_ptr<Node<T> > &node, const int indent) {
-    if (!node) return;
-
-    if (node->right) {
-        printTree(node->right, indent + 4);
-    }
-
-    if (indent) {
-        std::cout << std::string(indent, ' ');
-    }
-
-    std::cout << node->key << "(H:" << node->height
-            << ", B:" << Node<T>::getBalance(node) << ")\n";
-
-    if (node->left) {
-        printTree(node->left, indent + 4);
-    }
 }
 
 template<typename T>
