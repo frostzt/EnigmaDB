@@ -13,4 +13,6 @@ add_executable(lsmtree
         lib/avl.cpp
         lib/memtable.cpp
         lib/memtable.hpp
+        lib/timestamp_generator.cpp
+        lib/timestamp_generator.hpp
 )
