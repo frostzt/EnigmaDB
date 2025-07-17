@@ -4,13 +4,16 @@
 
 #include "memtable.hpp"
 
+#include "timestamp_generator.hpp"
+
 void MemTable::put(const Entry &entry) {
     tree_.insert(entry);
     currentSize_++;
 }
 
 void MemTable::remove(const std::string &primaryKey) {
-    const Entry tombstone("", primaryKey, {}, true, 0);
+    TimestampGenerator tsGen;
+    const Entry tombstone("", primaryKey, {}, true, tsGen.next());
     tree_.insert(tombstone);
 }
 
