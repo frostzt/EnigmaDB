@@ -1,4 +1,4 @@
-# LSM Tree
+# LSM Tree [WIP]
 
 Implementation of LSM tree from scratch.
 
