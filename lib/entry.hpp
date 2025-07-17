@@ -7,6 +7,8 @@
 #include <variant>
 #include <unordered_map>
 
+#include "timestamp_generator.hpp"
+
 using Field = std::variant<int, std::string, double>;
 using Row = std::unordered_map<std::string, Field>;
 
@@ -23,7 +25,9 @@ public:
 
     Entry(std::string table, std::string pk, Row data, const bool tombstone = false, const uint64_t ts = 0)
         : tableName(std::move(table)), primaryKey_(std::move(pk)), rowData_(std::move(data)),
-          isTombstone_(tombstone), timestamp_(ts) {
+          isTombstone_(tombstone) {
+        TimestampGenerator tsGen;
+        this->timestamp_ = tsGen.next();
     }
 
     std::vector<std::byte> serialize() const;

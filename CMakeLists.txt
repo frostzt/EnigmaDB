@@ -21,4 +21,6 @@ add_executable(lsmtree
         lib/wal.hpp
         lib/utils/byte_utils.cpp
         lib/utils/byte_utils.hpp
+        tests/utils/byte_utils.cpp
+        tests/utils/byte_utils.hpp
 )

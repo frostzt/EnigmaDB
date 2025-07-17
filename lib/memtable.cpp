@@ -12,8 +12,7 @@ void MemTable::put(const Entry &entry) {
 }
 
 void MemTable::remove(const std::string &primaryKey) {
-    TimestampGenerator tsGen;
-    const Entry tombstone("", primaryKey, {}, true, tsGen.next());
+    const Entry tombstone("", primaryKey, {}, true);
     tree_.insert(tombstone);
 }
 

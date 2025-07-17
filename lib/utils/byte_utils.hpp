@@ -11,7 +11,6 @@
 #include <cstdint>
 #include <string>
 #include <variant>
-#include <zlib.h>
 
 namespace Utility {
     /**

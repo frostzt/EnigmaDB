@@ -8,11 +8,13 @@
 
 #include "test_abs.hpp"
 #include "timestamp_generator_test.hpp"
+#include "utils/byte_utils.hpp"
 
 int main() {
     std::vector<std::unique_ptr<TestCase>> tests;
     tests.emplace_back(std::make_unique<TimestampMonotonicTest>());
     tests.emplace_back(std::make_unique<TimestampConcurrencyTest>());
+    tests.emplace_back(std::make_unique<TestConvertingToByes>());
 
     for (const auto& test : tests) {
         const bool result = test->execute();
