@@ -19,8 +19,12 @@ add_executable(lsmtree
         tests/timestamp_generator_test.cpp
         lib/wal.cpp
         lib/wal.hpp
-        lib/utils/byte_utils.cpp
-        lib/utils/byte_utils.hpp
+        lib/utils/crypto_utils.cpp
+        lib/utils/crypto_utils.hpp
         tests/utils/byte_utils.cpp
         tests/utils/byte_utils.hpp
+        lib/utils/byte_parser.cpp
+        lib/utils/byte_parser.hpp
+        tests/utils/byte_parser.cpp
+        tests/utils/byte_parser.hpp
 )

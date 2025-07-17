@@ -1,0 +1,59 @@
+//
+// Created by aiden on 7/18/2025.
+//
+
+#include "byte_parser.hpp"
+
+#include "lib/entry.hpp"
+
+std::string TestFullRoundTripWAL::name() const {
+    return "should return correct fields after encoding and decoding";
+}
+
+bool TestFullRoundTripWAL::execute() const {
+    const Entry entry("customers", "cid", {
+                          {"name", std::string("Sourav")},
+                          {"age", 25},
+                          {"balance", 999.999},
+                      }, false);
+
+    const auto serializedEntry = entry.serialize();
+    const auto deserialized = Entry::deserialize(serializedEntry.data(), serializedEntry.size());
+    if (!deserialized) {
+        std::cerr << "Deserialization failed" << std::endl;
+        return false;
+    }
+
+    const auto& dEntry = deserialized.value();
+    if (dEntry.tableName != entry.tableName) {
+        std::cerr << "Table name mismatch found!" << std::endl;
+        return false;
+    }
+
+    if (dEntry.primaryKey_ != entry.primaryKey_) {
+        std::cerr << "Primary key mismatch found!" << std::endl;
+        return false;
+    }
+
+    if (dEntry.rowData_.size() != entry.rowData_.size()) {
+        std::cerr << "Row data size mismatch!" << std::endl;
+        return false;
+    }
+
+    if (dEntry.rowData_ != entry.rowData_) {
+        std::cerr << "Row data mismatch!" << std::endl;
+        return false;
+    }
+
+    if (dEntry.isTombstone_ != entry.isTombstone_) {
+        std::cerr << "Tombstone mismatch!" << std::endl;
+        return false;
+    }
+
+    if (dEntry.timestamp_ != entry.timestamp_) {
+        std::cerr << "Timestamp mismatch!" << std::endl;
+        return false;
+    }
+
+    return true;
+}
