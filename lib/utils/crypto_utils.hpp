@@ -1,13 +1,19 @@
 //
-// Created by frostzt on 7/17/2025.
+// Created by aiden on 7/17/2025.
 //
 
-#include "byte_utils.hpp"
+#ifndef BYTE_UTILS_HPP
+#define BYTE_UTILS_HPP
 
-#include <zlib.h>
+#include <cassert>
+#include <cstring>
+#include <vector>
+#include <cstdint>
+#include <string>
+#include <variant>
 
 namespace Utility {
-	static constexpr uint32_t crc32Table[256] = {
+    static constexpr uint32_t crc32Table[256] = {
 		0x00000000L, 0xF26B8303L, 0xE13B70F7L, 0x1350F3F4L,
 		0xC79A971FL, 0x35F1141CL, 0x26A1E7E8L, 0xD4CA64EBL,
 		0x8AD958CFL, 0x78B2DBCCL, 0x6BE22838L, 0x9989AB3BL,
@@ -74,72 +80,9 @@ namespace Utility {
 		0xBE2DA0A5L, 0x4C4623A6L, 0x5F16D052L, 0xAD7D5351L
 	};
 
-	void writeUint16(std::vector<std::byte> &out, const uint16_t value) {
-		out.push_back(static_cast<std::byte>(value & 0xFF)); // lower byte
-		out.push_back(static_cast<std::byte>((value >> 8) & 0xFF)); // upper byte
-	}
+    uint32_t computeCRC32(const std::byte* data, size_t offset, size_t length);
 
-	void writeUint32(std::vector<std::byte> &out, const uint32_t value) {
-		for (int i = 0; i < 4; i++) {
-			out.push_back(static_cast<std::byte>((value >> 8 * i) & 0xFF));
-		}
-	}
-
-	void writeUint64(std::vector<std::byte> &out, const uint64_t value) {
-		for (int i = 0; i < 8; ++i) {
-			out.push_back(static_cast<std::byte>((value >> 8 * i) & 0xFF));
-		}
-	}
-
-	void patchUint64(std::vector<std::byte> &out, const size_t offset, const uint64_t value) {
-		for (int i = 0; i < 8; ++i) {
-			out[offset + i] = static_cast<std::byte>((value >> 8 * i) & 0xFF);
-		}
-	}
-
-	void writeString(std::vector<std::byte> &out, const std::string &s) {
-		assert(s.size() <= UINT16_MAX);
-		writeUint16(out, static_cast<uint16_t>(s.size()));
-		out.insert(out.end(),
-		           reinterpret_cast<const std::byte *>(s.data()),
-		           reinterpret_cast<const std::byte *>(s.data() + s.size()));
-	}
-
-	void writeVariant(std::vector<std::byte> &out, const Utility::Field &value) {
-		if (std::holds_alternative<int>(value)) {
-			out.push_back(static_cast<std::byte>(0x00)); // int flag
-			const int v = std::get<int>(value);
-			for (int i = 0; i < 4; i++) {
-				out.push_back(static_cast<std::byte>((v >> (8 * i)) & 0xFF));
-			}
-		} else if (std::holds_alternative<std::string>(value)) {
-			out.push_back(static_cast<std::byte>(0x01)); // std::string flag
-			writeString(out, std::get<std::string>(value));
-		} else if (std::holds_alternative<double>(value)) {
-			out.push_back(static_cast<std::byte>(0x02)); // double flag
-			const double v = std::get<double>(value);
-			uint8_t bytes[sizeof(double)];
-			std::memcpy(bytes, &v, sizeof(double));
-			out.insert(out.end(),
-			           reinterpret_cast<const std::byte *>(&v),
-			           reinterpret_cast<const std::byte *>(&v) + sizeof(double));
-		}
-	}
-
-	uint32_t computeCRC32(const std::vector<std::byte> &data, const size_t offset, size_t length) {
-		if (length == 0) length = data.size() - offset;
-
-		uint32_t crc = 0xFFFFFFFFU;
-		for (size_t i = offset; i < offset + length; ++i) {
-			const auto byte = static_cast<uint8_t>(data[i]);
-			crc = (crc >> 8) ^ crc32Table[(crc ^ byte) & 0xFF];
-		}
-		return ~crc;
-	}
-
-	void writeMagicBytes(std::vector<std::byte> &out) {
-		static constexpr std::string_view magic = "ENTRY";
-		out.insert(out.end(), reinterpret_cast<const std::byte *>(magic.data()),
-		           reinterpret_cast<const std::byte *>(magic.data() + magic.size()));
-	}
+    uint32_t computeCRC32(const std::vector<std::byte> &data, size_t offset, size_t length);
 }
+
+#endif //BYTE_UTILS_HPP

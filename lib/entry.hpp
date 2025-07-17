@@ -6,6 +6,7 @@
 #include <iostream>
 #include <variant>
 #include <unordered_map>
+#include <optional>
 
 #include "timestamp_generator.hpp"
 
@@ -31,6 +32,8 @@ public:
     }
 
     std::vector<std::byte> serialize() const;
+
+    static std::optional<Entry> deserialize(const std::byte *data, size_t length);
 
     std::string toHex() const;
 
