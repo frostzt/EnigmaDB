@@ -2,6 +2,7 @@
 #define ENTRY_HPP
 
 #include <cstdint>
+#include <vector>
 #include <iostream>
 #include <variant>
 #include <unordered_map>
@@ -22,7 +23,12 @@ public:
 
     Entry(std::string table, std::string pk, Row data, const bool tombstone = false, const uint64_t ts = 0)
         : tableName(std::move(table)), primaryKey_(std::move(pk)), rowData_(std::move(data)),
-          isTombstone_(tombstone), timestamp_(ts) {}
+          isTombstone_(tombstone), timestamp_(ts) {
+    }
+
+    std::vector<std::byte> serialize() const;
+
+    std::string toHex() const;
 
     // AVL Tree needs to compare Entries based on primaryKey
     bool operator<(const Entry &other) const {
@@ -33,10 +39,11 @@ public:
         return primaryKey_ == other.primaryKey_;
     }
 
+
     friend std::ostream &operator<<(std::ostream &os, const Entry &e) {
         os << "[" << e.tableName << "] " << e.primaryKey_ << " {";
 
-        for (const auto &[k, v] : e.rowData_) {
+        for (const auto &[k, v]: e.rowData_) {
             os << k << ": ";
             std::visit([&](auto &&arg) {
                 os << arg;
