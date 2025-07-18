@@ -9,6 +9,7 @@
 
 #include "utils/byte_parser.hpp"
 #include "utils/crypto_utils.hpp"
+#include "utils/logger.hpp"
 
 std::vector<std::byte> Entry::serialize() const {
     std::vector<std::byte> byteV{};
@@ -80,6 +81,7 @@ std::optional<Entry> Entry::deserialize(const std::byte *data, const size_t leng
 
     const uint32_t expected = parser.readUint32();
     if (const uint32_t actual = Utility::computeCRC32(data, 0, totalSize - 4); expected != actual) {
+        Utility::Logger::debug("mismatched checksum while entry deserialization: {} != {}", expected, actual);
         return std::nullopt;
     }
 

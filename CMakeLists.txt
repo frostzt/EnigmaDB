@@ -5,6 +5,17 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(.)
 
+include(FetchContent)
+
+# External content
+FetchContent_Declare(
+        spdlog
+        GIT_REPOSITORY https://github.com/gabime/spdlog.git
+        GIT_TAG v1.15.3
+)
+
+FetchContent_MakeAvailable(spdlog)
+
 add_executable(lsmtree
         lib/avl.hpp
         lib/entry.hpp
@@ -27,4 +38,7 @@ add_executable(lsmtree
         lib/utils/byte_parser.hpp
         tests/utils/byte_parser.cpp
         tests/utils/byte_parser.hpp
+        lib/utils/logger.hpp
 )
+
+target_link_libraries(lsmtree PRIVATE spdlog::spdlog)

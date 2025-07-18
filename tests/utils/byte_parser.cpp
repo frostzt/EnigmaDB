@@ -59,3 +59,23 @@ bool TestFullRoundTripWAL::execute() const {
 
     return true;
 }
+
+std::string TestChecksumCorruption::name() const {
+    return "should return nullopt if the checksum is invalid";
+}
+
+bool TestChecksumCorruption::execute() const {
+    const Entry entry("customers", "cid", {
+                          {"name", std::string("Sourav")},
+                          {"age", 25},
+                          {"balance", 999.999},
+                      }, false);
+
+    auto serializedEntry = entry.serialize();
+
+    // Simulate corruption by flipping lsb
+    serializedEntry.back() ^= static_cast<std::byte>(0x01);
+
+    const auto deserialized = Entry::deserialize(serializedEntry.data(), serializedEntry.size());
+    return !deserialized.has_value(); // nullopt should be returned if checksum is invalid
+}

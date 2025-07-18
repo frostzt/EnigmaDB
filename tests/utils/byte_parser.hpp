@@ -14,5 +14,12 @@ public:
     [[nodiscard]] bool execute() const override;
 };
 
+class TestChecksumCorruption final : public TestCase {
+public:
+    [[nodiscard]] std::string name() const override;
+
+    [[nodiscard]] bool execute() const override;
+};
+
 
 #endif //BYTE_PARSER_HPP
