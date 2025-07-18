@@ -31,9 +31,9 @@ std::vector<std::byte> Entry::serialize() const {
     byteV.push_back(static_cast<std::byte>(this->isTombstone_ ? 1 : 0));
     Utility::ByteParser::writeUint64(byteV, this->timestamp_);
 
-    // Patch the header to update total size
+    // Patch the header to update the total size
     const uint64_t totalSize = byteV.size() + 4; // +4 for checksum
-    Utility::ByteParser::patchUint64(byteV, 0, totalSize);
+    Utility::ByteParser::patchUint64(byteV, 5, totalSize);
 
     // Compute CRC32
     const uint32_t checksum = Utility::computeCRC32(byteV, 0, byteV.size());
@@ -43,11 +43,9 @@ std::vector<std::byte> Entry::serialize() const {
 }
 
 std::optional<Entry> Entry::deserialize(const std::byte *data, const size_t length) {
-    // const auto isEntry = std::string(reinterpret_cast<const char*>(data), 5);
-    // std::cout << "isEntry: " << isEntry << std::endl;
-    // if (isEntry != "ENTRY") {
-    //     return std::nullopt;
-    // }
+    if (const auto isEntry = std::string(reinterpret_cast<const char *>(data), 5); isEntry != "ENTRY") {
+        return std::nullopt;
+    }
 
     Utility::ByteParser parser(data + 5, length - 5);
     const uint64_t totalSize = parser.readUint64();
@@ -81,7 +79,7 @@ std::optional<Entry> Entry::deserialize(const std::byte *data, const size_t leng
     entry.timestamp_ = timestamp;
 
     const uint32_t expected = parser.readUint32();
-    if (const uint32_t actual = Utility::computeCRC32(data, 0, length - 4); expected != actual) {
+    if (const uint32_t actual = Utility::computeCRC32(data, 0, totalSize - 4); expected != actual) {
         return std::nullopt;
     }
 

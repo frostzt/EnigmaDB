@@ -21,6 +21,8 @@ namespace Utility {
         DOUBLE = 0x02,
     };
 
+    static constexpr std::string_view magic = "ENTRY";
+
     using Field = std::variant<int, std::string, double>;
 
     class ByteParser {

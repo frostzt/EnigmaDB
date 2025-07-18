@@ -119,9 +119,10 @@ namespace Utility {
 	}
 
 	void ByteParser::writeMagicBytes(std::vector<std::byte> &out) {
-		static constexpr std::string_view magic = "ENTRY";
-		out.insert(out.end(), reinterpret_cast<const std::byte *>(magic.data()),
-		           reinterpret_cast<const std::byte *>(magic.data() + magic.size()));
+		out.insert(out.end(),
+		           reinterpret_cast<const std::byte *>(magic.data()),
+		           reinterpret_cast<const std::byte *>(magic.data() + magic.size())
+		);
 	}
 }
 

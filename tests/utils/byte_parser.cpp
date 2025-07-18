@@ -4,6 +4,8 @@
 
 #include "byte_parser.hpp"
 
+#include <iomanip>
+
 #include "lib/entry.hpp"
 
 std::string TestFullRoundTripWAL::name() const {
@@ -24,7 +26,7 @@ bool TestFullRoundTripWAL::execute() const {
         return false;
     }
 
-    const auto& dEntry = deserialized.value();
+    const auto &dEntry = deserialized.value();
     if (dEntry.tableName != entry.tableName) {
         std::cerr << "Table name mismatch found!" << std::endl;
         return false;
