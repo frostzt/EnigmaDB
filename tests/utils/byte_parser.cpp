@@ -6,7 +6,7 @@
 
 #include <iomanip>
 
-#include "lib/entry.hpp"
+#include "lib/entry/entry.hpp"
 
 std::string TestFullRoundTripWAL::name() const {
     return "should return correct fields after encoding and decoding";

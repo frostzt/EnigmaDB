@@ -7,9 +7,9 @@
 
 #include "entry.hpp"
 
-#include "utils/byte_parser.hpp"
-#include "utils/crypto_utils.hpp"
-#include "utils/logger.hpp"
+#include "../utils/byte_parser.hpp"
+#include "../utils/crypto_utils.hpp"
+#include "../utils/logger.hpp"
 
 std::vector<std::byte> Entry::serialize() const {
     std::vector<std::byte> byteV{};

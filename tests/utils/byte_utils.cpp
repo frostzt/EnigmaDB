@@ -3,7 +3,7 @@
 //
 
 #include "byte_utils.hpp"
-#include "lib/entry.hpp"
+#include "lib/entry/entry.hpp"
 
 std::string TestConvertingToByes::name() const {
     return "should convert to bytes";

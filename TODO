@@ -1,0 +1,89 @@
+# 🧠 LSM Tree Development Checklist
+
+> A ground-up, production-grade Log-Structured Merge Tree implementation in C++, modeled after RocksDB, ScyllaDB, LevelDB, and Postgres internals.
+
+---
+
+## ✅ Phase 0: Core Primitives (Completed)
+
+- [x] `MemTable` with AVL Tree backend
+- [x] `Entry` abstraction with custom binary serialization
+- [x] `TimestampGenerator` using 48-bit wall-time + 16-bit logical counter (Hybrid Logical Clock)
+- [x] Test suite (`TestCase` abstraction, round-trip Entry tests, timestamp monotonicity, etc.)
+
+---
+
+## 🚧 Phase 1: WAL Record Format (Binary, Durable, Safe)
+
+- [x] Define WAL binary layout: `MAGIC | LENGTH | PAYLOAD | CRC32`
+- [x] Implement `Entry::serialize()` and `Entry::deserialize()`
+- [ ] Implement `writeRecord(std::ofstream&, const Entry&)`
+- [ ] Implement `readRecord(std::ifstream&) -> std::optional<Entry>`
+- [ ] Validate magic bytes and CRC32 during read
+- [ ] Test corrupted payload handling
+
+---
+
+## 🚧 Phase 2: WAL Writer/Reader Interface
+
+- [ ] `WALWriter::append(const Entry&)`
+- [ ] `WALReader::loadAll() -> std::vector<Entry>` or iterator
+- [ ] Track WAL segment file size and trigger rotation
+- [ ] Glob or manifest-based segment tracking
+- [ ] Test: multiple entries across segments
+
+---
+
+## 🚧 Phase 3: WAL Rotation + Recovery
+
+- [ ] Segment size limit (e.g. 1MB)
+- [ ] Naming convention: `000001.wal`, `000002.wal`, ...
+- [ ] `manifest.json` or `last_segment.txt` to track current segment
+- [ ] Simulate crash → recover from partial WAL
+- [ ] Test: corrupt tail segment and recover rest safely
+
+---
+
+## 🚧 Phase 4: Integration with MemTable
+
+- [ ] On `put()` or `delete()`, append to WAL before memory
+- [ ] On startup, use `WALReader` to replay all segments into MemTable
+- [ ] Flush MemTable to SSTable → delete WAL segments
+- [ ] Ensure crash between flush/WAL deletion is safe
+- [ ] Unit test: full WAL + MemTable replay
+
+---
+
+## 🚧 Phase 5: SSTables & Compaction
+
+- [ ] Design SSTable format (index block, footer, compressed block layout)
+- [ ] Write `SSTWriter` for flushing MemTable
+- [ ] Read-only `SSTReader` for lookups, range queries
+- [ ] Implement background compaction worker
+- [ ] Merge entries + apply tombstones
+- [ ] Handle overlapping key ranges
+
+---
+
+## 🚧 Phase 6: Concurrency & Safety
+
+- [ ] Thread-safe WAL + MemTable access
+- [ ] Background flush thread
+- [ ] Atomic MemTable-to-SSTable fencing
+- [ ] Optional: lock-free or buffered WAL queue
+- [ ] Test: concurrent inserts, crash recovery, flush race conditions
+
+---
+
+## 🌟 Phase 7: Optional Power-Ups (Stretch Goals)
+
+- [ ] **Compression** (e.g. LZ4) for WAL/SSTable payloads
+- [ ] **Bloom filters** for SSTable key lookups
+- [ ] **MVCC-style versioning**: multiple versions per key
+- [ ] **Read snapshot isolation**
+- [ ] **REST/gRPC interface** for querying
+- [ ] **Write batching** + WAL group commit
+- [ ] **Compaction tuning** (size-tiered, leveled, hybrid)
+- [ ] **Benchmarks** vs RocksDB on inserts / queries / recovery
+
+---

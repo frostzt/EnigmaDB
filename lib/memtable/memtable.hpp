@@ -5,8 +5,8 @@
 #ifndef MEMTABLE_HPP
 #define MEMTABLE_HPP
 
-#include "avl.hpp"
-#include "entry.hpp"
+#include "../abstract/avl.hpp"
+#include "../entry/entry.hpp"
 
 class MemTable {
 private:

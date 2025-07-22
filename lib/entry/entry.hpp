@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <optional>
 
-#include "timestamp_generator.hpp"
+#include "../abstract/timestamp_generator.hpp"
 
 using Field = std::variant<int, std::string, double>;
 using Row = std::unordered_map<std::string, Field>;

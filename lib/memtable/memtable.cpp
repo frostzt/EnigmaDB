@@ -4,7 +4,7 @@
 
 #include "memtable.hpp"
 
-#include "timestamp_generator.hpp"
+#include "../abstract/timestamp_generator.hpp"
 
 void MemTable::put(const Entry &entry) {
     tree_.insert(entry);

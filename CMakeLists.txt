@@ -17,19 +17,17 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(spdlog)
 
 add_executable(lsmtree
-        lib/avl.hpp
-        lib/entry.hpp
-        lib/entry.cpp
-        lib/memtable.cpp
-        lib/memtable.hpp
-        lib/timestamp_generator.cpp
-        lib/timestamp_generator.hpp
+        lib/abstract/avl.hpp
+        lib/entry/entry.hpp
+        lib/entry/entry.cpp
+        lib/memtable/memtable.cpp
+        lib/memtable/memtable.hpp
+        lib/abstract/timestamp_generator.cpp
+        lib/abstract/timestamp_generator.hpp
         tests/test_abs.hpp
         tests/test_main.cpp
         tests/timestamp_generator_test.hpp
         tests/timestamp_generator_test.cpp
-        lib/wal.cpp
-        lib/wal.hpp
         lib/utils/crypto_utils.cpp
         lib/utils/crypto_utils.hpp
         tests/utils/byte_utils.cpp
@@ -39,6 +37,8 @@ add_executable(lsmtree
         tests/utils/byte_parser.cpp
         tests/utils/byte_parser.hpp
         lib/utils/logger.hpp
+        lib/wal/wal.cpp
+        lib/wal/wal.hpp
 )
 
 target_link_libraries(lsmtree PRIVATE spdlog::spdlog)

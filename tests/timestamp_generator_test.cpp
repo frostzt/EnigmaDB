@@ -3,7 +3,7 @@
 //
 
 #include "timestamp_generator_test.hpp"
-#include "lib/timestamp_generator.hpp"
+#include "lib/abstract/timestamp_generator.hpp"
 
 #include <thread>
 #include <vector>
