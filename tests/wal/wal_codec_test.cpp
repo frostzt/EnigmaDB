@@ -7,6 +7,15 @@
 
 #include "lib/entry/entry.hpp"
 
+bool __compareEntries(const Entry &e1, const Entry &e2) {
+    if (e1.tableName != e2.tableName) return false;
+    if (e1.primaryKey_ != e2.primaryKey_) return false;
+    if (e1.isTombstone_ != e2.isTombstone_) return false;
+    if (e1.timestamp_ != e2.timestamp_) return false;
+    if (e1.rowData_ != e2.rowData_) return false;
+    return true;
+}
+
 bool TestFullWALCodecTrip::execute() const {
     const Entry entry("customers", "cid", {
                           {"name", std::string("Sourav")},
@@ -69,4 +78,61 @@ bool TestFullWALCodecTrip::execute() const {
     }
 
     return true;
+}
+
+bool TestWALMultipleEntries::execute() const {
+    const Entry sourav("customers", "cid", {
+                          {"name", std::string("Sourav")},
+                          {"age", 25},
+                          {"balance", 1000},
+                      }, false);
+
+    const Entry sudheer("customers", "cid", {
+                          {"name", std::string("Sudheer")},
+                          {"age", 25},
+                          {"balance", 2000},
+                      }, false);
+
+    const Entry sachin("customers", "cid", {
+                          {"name", std::string("Sachin")},
+                          {"age", 27},
+                          {"balance", 5000.500},
+                      }, false);
+
+    std::string fileName = "00001_test.wal";
+    std::ofstream out(fileName, std::ios_base::out | std::ios_base::binary);
+    if (!out.good()) {
+        std::cerr << "Failed to open file for writing, or the file was not created!" << std::endl;
+        return false;
+    }
+
+    // Record all the entries in WAL
+    WAL::writeRecord(out, sourav);
+    WAL::writeRecord(out, sudheer);
+    WAL::writeRecord(out, sachin);
+
+    // Read the entries
+    std::ifstream in(fileName, std::ios_base::in | std::ios_base::binary);
+    if (!in.good()) {
+        std::cerr << "Failed to open file for reading!" << std::endl;
+        return false;
+    }
+
+    std::vector<Entry> entries;
+    while (true) {
+        const auto readEntry = WAL::readRecord(in);
+        if (!readEntry.has_value()) break;
+        entries.push_back(readEntry.value());
+    }
+
+    int result = false;
+    result = __compareEntries(sourav, entries[0]);
+    if (!result) return false;
+
+    result = __compareEntries(sudheer, entries[1]);
+    if (!result) return false;
+
+    result = __compareEntries(sachin, entries[2]);
+
+    return result;
 }

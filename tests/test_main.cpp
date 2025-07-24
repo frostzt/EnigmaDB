@@ -27,6 +27,7 @@ int main() {
 
     // WAL
     tests.emplace_back(std::make_unique<TestFullWALCodecTrip>());
+    tests.emplace_back(std::make_unique<TestWALMultipleEntries>());
 
     std::unordered_map<std::string, std::vector<TestCase *> > grouped;
     std::vector<std::unique_ptr<TestCase> > testInstances;
