@@ -11,6 +11,10 @@
 #include "lib/entry/entry.hpp"
 
 namespace WAL {
+    static constexpr size_t operator"" _MB(const unsigned long long int mb) {
+        return mb * 1024 * 1024;
+    }
+
     class WALManager {
     private:
         std::string walDir_;
@@ -18,6 +22,7 @@ namespace WAL {
         std::ofstream currentOut_;
         size_t currentBytesWritten_;
         uint32_t currentFileId_;
+
 
         std::string filePath(uint32_t fileId) const;
 
@@ -36,7 +41,6 @@ namespace WAL {
         }
 
     public:
-        static constexpr size_t operator"" _MB(const unsigned long long int mb) { return mb * 1024 * 1024; }
 
         explicit WALManager(std::string walDir, size_t maxFileSizeBytes = 1_MB): walDir_(std::move(walDir)),
             maxFileSizeBytes_(maxFileSizeBytes),

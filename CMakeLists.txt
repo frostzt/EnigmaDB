@@ -16,6 +16,12 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(spdlog)
 
+if(MSVC)
+    add_compile_options(/arch:AVX2)
+else()
+    add_compile_options(-mavx2 -msse4.2)
+endif()
+
 add_executable(lsmtree
         lib/abstract/avl.hpp
         lib/entry/entry.hpp
