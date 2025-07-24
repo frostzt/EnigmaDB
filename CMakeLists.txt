@@ -42,6 +42,8 @@ add_executable(lsmtree
         lib/wal/wal_codec.hpp
         tests/wal/wal_codec_test.cpp
         tests/wal/wal_codec_test.hpp
+        lib/wal/wal_manager.cpp
+        lib/wal/wal_manager.hpp
 )
 
 target_link_libraries(lsmtree PRIVATE spdlog::spdlog)
