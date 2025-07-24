@@ -9,14 +9,6 @@
 #include <vector>
 #include <unordered_set>
 
-std::string TimestampMonotonicTest::name() const {
-    return "should return monotonic values";
-}
-
-std::string TimestampConcurrencyTest::name() const {
-    return "should stay unique under concurrency";
-}
-
 bool TimestampMonotonicTest::execute() const {
     TimestampGenerator tsGen;
 

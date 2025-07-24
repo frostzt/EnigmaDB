@@ -5,10 +5,6 @@
 #include "byte_utils.hpp"
 #include "lib/entry/entry.hpp"
 
-std::string TestConvertingToByes::name() const {
-    return "should convert to bytes";
-}
-
 bool TestConvertingToByes::execute() const {
     const Entry entry("customer", "cid", {}, false);
 

@@ -9,7 +9,13 @@
 
 class TestConvertingToByes final : public TestCase {
 public:
-    [[nodiscard]] std::string name() const override;
+    [[nodiscard]] std::string suiteName() const override {
+        return "[BYTE_PARSER]";
+    };
+
+    [[nodiscard]] std::string name() const override {
+        return "should convert to bytes";
+    }
 
     [[nodiscard]] bool execute() const override;
 };

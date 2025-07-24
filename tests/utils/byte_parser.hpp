@@ -9,14 +9,26 @@
 
 class TestFullRoundTripWAL final : public TestCase {
 public:
-    [[nodiscard]] std::string name() const override;
+    [[nodiscard]] std::string suiteName() const override {
+        return "[BYTE_PARSER]";
+    };
+
+    [[nodiscard]] std::string name() const override {
+        return "should return correct fields after encoding and decoding";
+    }
 
     [[nodiscard]] bool execute() const override;
 };
 
 class TestChecksumCorruption final : public TestCase {
 public:
-    [[nodiscard]] std::string name() const override;
+    [[nodiscard]] std::string suiteName() const override {
+        return "[BYTE_PARSER]";
+    };
+
+    [[nodiscard]] std::string name() const override {
+        return "should return nullopt if the checksum is invalid";
+    }
 
     [[nodiscard]] bool execute() const override;
 };

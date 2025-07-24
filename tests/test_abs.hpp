@@ -11,6 +11,7 @@ class TestCase {
 public:
     virtual ~TestCase() = default;
 
+    [[nodiscard]] virtual std::string suiteName() const = 0;
     [[nodiscard]] virtual std::string name() const = 0;
     [[nodiscard]] virtual bool execute() const = 0;
 };

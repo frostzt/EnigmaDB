@@ -1,29 +1,43 @@
 //
-// Created by aiden on 7/18/2025.
+// Created by aiden on 7/24/2025.
 //
 
-
-#include <iomanip>
-
-#include "byte_parser.hpp"
-#include "lib/entry/entry.hpp"
+#include "wal_codec_test.hpp"
 #include "lib/wal/wal_codec.hpp"
 
-bool TestFullRoundTripWAL::execute() const {
+#include "lib/entry/entry.hpp"
+
+bool TestFullWALCodecTrip::execute() const {
     const Entry entry("customers", "cid", {
                           {"name", std::string("Sourav")},
                           {"age", 25},
                           {"balance", 999.999},
                       }, false);
 
-    const auto serializedEntry = entry.serialize();
-    const auto deserialized = Entry::deserialize(serializedEntry.data(), serializedEntry.size());
-    if (!deserialized) {
-        std::cerr << "Deserialization failed" << std::endl;
+    std::string fileName = "00001_test.wal";
+    std::ofstream out(fileName, std::ios_base::out | std::ios_base::binary);
+    if (!out.good()) {
+        std::cerr << "Failed to open file for writing, or the file was not created!" << std::endl;
         return false;
     }
 
-    const auto &dEntry = deserialized.value();
+    // Write the entry to the WAL file
+    WAL::writeRecord(out, entry);
+
+    std::ifstream in(fileName, std::ios_base::in | std::ios_base::binary);
+    if (!in.good()) {
+        std::cerr << "Failed to open file for reading!" << std::endl;
+        return false;
+    }
+
+    const auto readEntry = WAL::readRecord(in);
+    if (!readEntry.has_value()) {
+        std::cerr << "Failed to read the entry from the WAL file!" << std::endl;
+        return false;
+    }
+
+    const auto &dEntry = readEntry.value();
+
     if (dEntry.tableName != entry.tableName) {
         std::cerr << "Table name mismatch found!" << std::endl;
         return false;
@@ -55,20 +69,4 @@ bool TestFullRoundTripWAL::execute() const {
     }
 
     return true;
-}
-
-bool TestChecksumCorruption::execute() const {
-    const Entry entry("customers", "cid", {
-                          {"name", std::string("Sourav")},
-                          {"age", 25},
-                          {"balance", 999.999},
-                      }, false);
-
-    auto serializedEntry = entry.serialize();
-
-    // Simulate corruption by flipping lsb
-    serializedEntry.back() ^= static_cast<std::byte>(0x01);
-
-    const auto deserialized = Entry::deserialize(serializedEntry.data(), serializedEntry.size());
-    return !deserialized.has_value(); // nullopt should be returned if checksum is invalid
 }

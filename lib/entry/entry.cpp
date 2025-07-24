@@ -7,9 +7,10 @@
 
 #include "entry.hpp"
 
-#include "../utils/byte_parser.hpp"
-#include "../utils/crypto_utils.hpp"
-#include "../utils/logger.hpp"
+#include "lib/utils/byte_parser.hpp"
+#include "lib/utils/crypto_utils.hpp"
+#include "lib/utils/logger.hpp"
+// #include "lib/utils/logger.hpp"
 
 std::vector<std::byte> Entry::serialize() const {
     std::vector<std::byte> byteV{};
@@ -45,6 +46,7 @@ std::vector<std::byte> Entry::serialize() const {
 
 std::optional<Entry> Entry::deserialize(const std::byte *data, const size_t length) {
     if (const auto isEntry = std::string(reinterpret_cast<const char *>(data), 5); isEntry != "ENTRY") {
+        spdlog::error("ENTRY: invalid magic bytes while entry deserialization: {}", isEntry);
         return std::nullopt;
     }
 
@@ -81,7 +83,7 @@ std::optional<Entry> Entry::deserialize(const std::byte *data, const size_t leng
 
     const uint32_t expected = parser.readUint32();
     if (const uint32_t actual = Utility::computeCRC32(data, 0, totalSize - 4); expected != actual) {
-        Utility::Logger::debug("mismatched checksum while entry deserialization: {} != {}", expected, actual);
+        spdlog::debug("mismatched checksum while entry deserialization: {} != {}", expected, actual);
         return std::nullopt;
     }
 

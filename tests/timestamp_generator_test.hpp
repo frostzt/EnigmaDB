@@ -11,14 +11,26 @@
 
 class TimestampMonotonicTest final : public TestCase {
 public:
-    [[nodiscard]] std::string name() const override;
+    [[nodiscard]] std::string suiteName() const override {
+        return "[TIMESTAMP_GENERATOR]";
+    }
+
+    [[nodiscard]] std::string name() const override {
+        return "should generate monotonically increasing timestamps";
+    }
 
     [[nodiscard]] bool execute() const override;
 };
 
 class TimestampConcurrencyTest final : public TestCase {
 public:
-    [[nodiscard]] std::string name() const override;
+    [[nodiscard]] std::string suiteName() const override {
+        return "[TIMESTAMP_GENERATOR]";
+    }
+
+    [[nodiscard]] std::string name() const override {
+        return "should generate timestamps with no collisions with concurrent calls";
+    }
 
     [[nodiscard]] bool execute() const override;
 };
