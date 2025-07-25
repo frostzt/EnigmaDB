@@ -15,14 +15,34 @@
 #include "spdlog/spdlog.h"
 
 namespace WAL {
+    enum class FlushMode {
+        NO_FLUSH,
+        FORCE_FLUSH,
+    };
+
     static constexpr size_t MAGIC_SIZE = 5;
     static constexpr std::array<char, 5> MAGIC = {'W', 'A', 'L', '0', '1'};
 
-    inline void writeRecord(std::ofstream &out, const Entry &entry) {
+    /**
+     * Writes a record to the provided output file stream. The record consists of magic bytes,
+     * serialized payload length, and the serialized payload. Optionally flushes the data to disk
+     * based on the flush mode.
+     *
+     * @param out The output file stream to write the record to. Must be open and valid.
+     * @param entry The entry to be serialized and written into the output file.
+     * @param forceFlush Specifies whether the stream should be explicitly flushed to disk.
+     *                   Defaults to `FlushMode::NO_FLUSH`.
+     * @return The total number of bytes written to the output stream.
+     */
+    inline uint32_t writeRecord(std::ofstream &out, const Entry &entry,
+                                const FlushMode forceFlush = FlushMode::NO_FLUSH) {
         assert(out.is_open());
+
+        uint32_t totalBytesWritten = 0;
 
         // Write the magic bytes
         out.write(MAGIC.data(), MAGIC_SIZE);
+        totalBytesWritten += MAGIC_SIZE;
 
         // Serialize the entry
         const std::vector<std::byte> serialized = entry.serialize();
@@ -30,13 +50,27 @@ namespace WAL {
 
         // Write payload length
         out.write(reinterpret_cast<const char *>(&payloadLength), sizeof(payloadLength));
+        totalBytesWritten += sizeof(payloadLength);
 
         // Write payload
-        out.write(reinterpret_cast<const char *>(serialized.data()), static_cast<std::streamsize>(payloadLength));
+        out.write(reinterpret_cast<const char *>(serialized.data()), payloadLength);
+        totalBytesWritten += payloadLength;
 
-        out.flush();
+        // Flush this into Disk if explicitly specified, otherwise we go the batched durability way
+        if (forceFlush == FlushMode::FORCE_FLUSH) { out.flush(); }
+
+        return totalBytesWritten;
     }
 
+    /**
+     * Reads a record from the provided input file stream. The record is deserialized
+     * and returned as an optional Entry object. This includes reading magic bytes,
+     * payload length, and the serialized payload. Logs errors in case of failure.
+     *
+     * @param in The input file stream to read the record from. Must be open and valid.
+     * @return An optional Entry object representing the deserialized record.
+     *         Returns std::nullopt if the record cannot be read or deserialized.
+     */
     inline std::optional<Entry> readRecord(std::ifstream &in) {
         assert(in.is_open());
 
