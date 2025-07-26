@@ -5,13 +5,14 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 #include "test_abs.hpp"
 #include "timestamp_generator_test.hpp"
-#include "spdlog/spdlog.h"
 #include "utils/byte_parser.hpp"
 #include "utils/byte_utils.hpp"
 #include "wal/wal_codec_test.hpp"
+#include "wal/wal_manager_test.hpp"
 
 int main() {
     std::vector<std::unique_ptr<TestCase> > tests;
@@ -28,6 +29,7 @@ int main() {
     // WAL
     tests.emplace_back(std::make_unique<TestFullWALCodecTrip>());
     tests.emplace_back(std::make_unique<TestWALMultipleEntries>());
+    tests.emplace_back(std::make_unique<TestWALConcurrentAppendsWithRotation>());
 
     std::unordered_map<std::string, std::vector<TestCase *> > grouped;
     std::vector<std::unique_ptr<TestCase> > testInstances;

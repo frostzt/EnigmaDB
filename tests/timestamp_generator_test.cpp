@@ -38,7 +38,7 @@ bool TimestampConcurrencyTest::execute() const {
         threads.emplace_back([&tsGen, &threadResults, i]() {
             for (size_t j = 0; j < perThreadTsCount; ++j) {
                 uint64_t ts = tsGen.next();
-                threadResults[i].push_back(ts); // Each thread writes to its own vec
+                threadResults[i].push_back(ts);
             }
         });
     }

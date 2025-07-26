@@ -50,6 +50,9 @@ add_executable(lsmtree
         tests/wal/wal_codec_test.hpp
         lib/wal/wal_manager.cpp
         lib/wal/wal_manager.hpp
+        tests/wal/wal_manager_test.cpp
+        tests/wal/wal_manager_test.hpp
+        lib/utils/constants.hpp
 )
 
 target_link_libraries(lsmtree PRIVATE spdlog::spdlog)

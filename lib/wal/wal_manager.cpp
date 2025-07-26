@@ -32,18 +32,13 @@ namespace WAL {
             this->rotate(); // Rotate the WAL file
         }
 
-        spdlog::debug("WAL: Wrote {} bytes to WAL file {} (total: {})", bytesWritten, this->currentFileId_,
-                      this->currentBytesWritten_);
+        // Utility::Logger::debug("WAL: Wrote {} bytes to WAL file {} (total: {})", bytesWritten, this->currentFileId_,
+        //               this->currentBytesWritten_);
 
         return true;
     }
 
     void WALManager::rotate() {
-        // Acquiring the same mutex, note that this will be called internally
-        // my IDE suggests that I can leave out std::mutex here, so I'll the
-        // compiler do the job :p
-        std::lock_guard guard(this->writeMutex_);
-
         if (this->currentOut_.is_open()) {
             this->currentOut_.flush(); // Flush the current buffer, append NOT necessarily forces flush
             this->currentOut_.close();
@@ -56,13 +51,22 @@ namespace WAL {
         const std::string path = this->filePath(this->currentFileId_);
         this->currentOut_.open(path, std::ios::out | std::ios::app | std::ios::binary);
         if (!this->currentOut_.good()) {
-            spdlog::error("WAL: Failed to open WAL file '{}' for writing!", path);
+            // Utility::Logger::error("WAL: Failed to open WAL file '{}' for writing!", path);
             throw std::runtime_error("WAL: Failed to open WAL file for writing!");
         }
 
         // Reset fields for the new file
         this->currentBytesWritten_ = 0;
 
-        spdlog::info("WAL: Rotated WAL file to {}", path);
+        // Utility::Logger::info("WAL: Rotated WAL file to {}", path);
+    }
+
+    void WALManager::close() {
+        std::lock_guard guard(this->writeMutex_);
+
+        if (this->currentOut_.is_open()) {
+            this->currentOut_.flush();
+            this->currentOut_.close();
+        }
     }
 } // namespace WAL

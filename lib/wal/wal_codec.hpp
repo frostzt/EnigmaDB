@@ -12,7 +12,7 @@
 #include <cstring>
 
 #include "lib/entry/entry.hpp"
-#include "spdlog/spdlog.h"
+// #include "spdlog/spdlog.h"
 
 namespace WAL {
     enum class FlushMode {
@@ -85,7 +85,7 @@ namespace WAL {
         uint32_t payloadLength;
         in.read(reinterpret_cast<char *>(&payloadLength), sizeof(payloadLength));
         if (in.gcount() < sizeof(payloadLength)) {
-            spdlog::error("WAL: failed to read payload length");
+            // spdlog::error("WAL: failed to read payload length");
             return std::nullopt;
         }
 
@@ -93,14 +93,14 @@ namespace WAL {
         std::vector<std::byte> payload(payloadLength);
         in.read(reinterpret_cast<char *>(payload.data()), payloadLength);
         if (in.gcount() < payloadLength) {
-            spdlog::error("WAL: incomplete payload - skipping.");
+            // spdlog::error("WAL: incomplete payload - skipping.");
             return std::nullopt;
         }
 
         // Deserialize the entry
         const auto entryOpt = Entry::deserialize(payload.data(), payload.size());
         if (!entryOpt.has_value()) {
-            spdlog::warn("WAL: failed to deserialize entry");
+            // spdlog::warn("WAL: failed to deserialize entry");
             return std::nullopt;
         }
 

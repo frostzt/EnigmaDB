@@ -5,9 +5,11 @@
 #include "wal_codec_test.hpp"
 #include "lib/wal/wal_codec.hpp"
 
+#include <filesystem>
+
 #include "lib/entry/entry.hpp"
 
-bool __compareEntries(const Entry &e1, const Entry &e2) {
+bool compareEntries(const Entry &e1, const Entry &e2) {
     if (e1.tableName != e2.tableName) return false;
     if (e1.primaryKey_ != e2.primaryKey_) return false;
     if (e1.isTombstone_ != e2.isTombstone_) return false;
@@ -31,7 +33,8 @@ bool TestFullWALCodecTrip::execute() const {
     }
 
     // Write the entry to the WAL file
-    WAL::writeRecord(out, entry);
+    WAL::writeRecord(out, entry, WAL::FlushMode::FORCE_FLUSH);
+    out.close();
 
     std::ifstream in(fileName, std::ios_base::in | std::ios_base::binary);
     if (!in.good()) {
@@ -77,6 +80,9 @@ bool TestFullWALCodecTrip::execute() const {
         return false;
     }
 
+    in.close();
+    std::filesystem::remove(fileName);
+
     return true;
 }
 
@@ -109,7 +115,8 @@ bool TestWALMultipleEntries::execute() const {
     // Record all the entries in WAL
     WAL::writeRecord(out, sourav);
     WAL::writeRecord(out, sudheer);
-    WAL::writeRecord(out, sachin);
+    WAL::writeRecord(out, sachin, WAL::FlushMode::FORCE_FLUSH);
+    out.close();
 
     // Read the entries
     std::ifstream in(fileName, std::ios_base::in | std::ios_base::binary);
@@ -126,13 +133,15 @@ bool TestWALMultipleEntries::execute() const {
     }
 
     int result = false;
-    result = __compareEntries(sourav, entries[0]);
+    result = compareEntries(sourav, entries[0]);
     if (!result) return false;
 
-    result = __compareEntries(sudheer, entries[1]);
+    result = compareEntries(sudheer, entries[1]);
     if (!result) return false;
 
-    result = __compareEntries(sachin, entries[2]);
+    result = compareEntries(sachin, entries[2]);
 
+    in.close();
+    std::filesystem::remove(fileName);
     return result;
 }

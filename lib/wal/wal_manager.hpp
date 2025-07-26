@@ -11,12 +11,9 @@
 #include <string>
 
 #include "lib/entry/entry.hpp"
+#include "lib/utils/constants.hpp"
 
 namespace WAL {
-    static constexpr size_t operator"" _MB(const unsigned long long int mb) {
-        return mb * 1024 * 1024;
-    }
-
     class WALManager {
     private:
         std::string walDir_;
@@ -37,7 +34,7 @@ namespace WAL {
         uint32_t getLatestWALId();
 
         bool init() {
-            this->currentFileId_ = getLatestWALId();
+            this->currentFileId_ = 0;
             const std::string path = filePath(this->currentFileId_);
             this->currentEntriesInBuffer_ = 0;
             this->currentOut_.open(path, std::ios::out | std::ios::app | std::ios::binary);
@@ -46,6 +43,19 @@ namespace WAL {
             this->currentBytesWritten_ = getFileSize(path);
             return true;
         }
+
+        /**
+         * Rotates the Write-Ahead Log (WAL) file by closing the current file,
+         * opening a new file for writing, and resetting relevant internal
+         * tracking fields. This method ensures thread safety with a mutex.
+         *
+         * The rotation involves safely flushing and closing the existing
+         * file stream, followed by initializing a new WAL file with an
+         * incremented file identifier.
+         *
+         * @throws std::runtime_error if the new WAL file fails to open for writing
+         */
+        void rotate();
 
     public:
         explicit WALManager(std::string walDir, size_t maxFileSizeBytes = 1_MB): walDir_(std::move(walDir)),
@@ -71,19 +81,6 @@ namespace WAL {
         std::vector<Entry> loadAll();
 
         void close();
-
-        /**
-         * Rotates the Write-Ahead Log (WAL) file by closing the current file,
-         * opening a new file for writing, and resetting relevant internal
-         * tracking fields. This method ensures thread safety with a mutex.
-         *
-         * The rotation involves safely flushing and closing the existing
-         * file stream, followed by initializing a new WAL file with an
-         * incremented file identifier.
-         *
-         * @throws std::runtime_error if the new WAL file fails to open for writing
-         */
-        void rotate();
     };
 } // namespace WAL
 
