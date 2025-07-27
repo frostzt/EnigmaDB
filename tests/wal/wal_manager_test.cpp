@@ -13,7 +13,7 @@ bool TestWALConcurrentAppendsWithRotation::execute() const {
     std::filesystem::create_directory(path);
 
     // Construct a new manager with 4KB maxFileSizeBytes for quick rotation
-    WAL::WALManager manager(path, 4_KB);
+    WAL::WALManager manager(path, 1, 4_KB);
 
     constexpr int threadCount = 5;
     constexpr int perThreadCount = 5000;

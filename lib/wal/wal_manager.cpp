@@ -25,7 +25,11 @@ namespace WAL {
     bool WALManager::append(const Entry &entry) {
         std::lock_guard guard(this->writeMutex_);
 
-        const auto bytesWritten = WAL::writeRecord(this->currentOut_, entry, WAL::FlushMode::FORCE_FLUSH);
+        // Flush the entries if they cross the expected in-memory size
+        const auto flushMode = this->maxEntriesInBuffer_ >= this->currentEntriesInBuffer_
+                                   ? WAL::FlushMode::FORCE_FLUSH
+                                   : WAL::FlushMode::NO_FLUSH;
+        const auto bytesWritten = WAL::writeRecord(this->currentOut_, entry, flushMode);
         this->currentBytesWritten_ += bytesWritten;
 
         if (this->currentBytesWritten_ >= this->maxFileSizeBytes_) {
