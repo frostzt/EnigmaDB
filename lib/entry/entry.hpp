@@ -27,6 +27,7 @@ public:
     Entry(std::string table, std::string pk, Row data, const bool tombstone = false, const uint64_t ts = 0)
         : tableName(std::move(table)), primaryKey_(std::move(pk)), rowData_(std::move(data)),
           isTombstone_(tombstone) {
+        // Generate timestamp for this entry
         TimestampGenerator tsGen;
         this->timestamp_ = tsGen.next();
     }

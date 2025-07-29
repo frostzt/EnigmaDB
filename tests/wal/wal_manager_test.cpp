@@ -4,6 +4,7 @@
 
 #include "wal_manager_test.hpp"
 #include "lib/wal/wal_manager.hpp"
+#include "lib/utils/constants.hpp"
 
 #include <algorithm>
 #include <filesystem>
