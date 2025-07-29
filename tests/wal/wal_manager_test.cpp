@@ -45,9 +45,7 @@ bool TestWALConcurrentAppendsWithRotation::execute() const {
 
     // Get details
     const auto total = manager.getWritersMetaData();
-    const auto totalFiles = totalFilesInDir(path);
-
-    std::cout << "Total files in dir: " << totalFiles << " Total from meta:  " << total << std::endl;
+    if (const auto totalFiles = totalFilesInDir(path); total != totalFiles) return false;
 
     // Close all the writers
     manager.close();
