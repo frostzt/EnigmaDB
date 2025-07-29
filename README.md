@@ -1,4 +1,6 @@
-# LSM Tree [WIP]
+# EnigmaDB [WIP]
+
+## LSM Trees
 
 Implementation of LSM tree from scratch.
 
