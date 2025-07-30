@@ -83,7 +83,7 @@ namespace WAL {
          * @param entry The entry to be appended to the WAL.
          * @return True if the entry was successfully appended, false otherwise.
          */
-        [[nodiscard]] bool append(const Entry &entry) const;
+        [[nodiscard]] bool append(const core::Entry &entry) const;
 
         /**
          * Closes all writers managed by the WALManager, ensuring that any pending
@@ -102,7 +102,7 @@ namespace WAL {
          *                the WAL files. The function accepts an rvalue reference to
          *                an Entry object, enabling efficient transfer of ownership.
          */
-        void loadAll(const std::function<void(Entry &&)> &replyFn) const;
+        void loadAll(const std::function<void(core::Entry &&)> &replyFn) const;
 
         /**
          * Loads all entries from the Write-Ahead Log (WAL) files and returns them
@@ -112,7 +112,7 @@ namespace WAL {
          *
          * @return A vector containing all entries from the WAL, sorted by timestamp.
          */
-        [[nodiscard]] std::vector<Entry> loadAll() const;
+        [[nodiscard]] std::vector<core::Entry> loadAll() const;
 
         [[nodiscard]] uint32_t getWritersMetaData() const {
             uint32_t total = 0;

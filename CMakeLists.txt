@@ -56,6 +56,9 @@ add_executable(lsmtree
         lib/wal/wal_writer.cpp
         lib/wal/wal_writer.hpp
         tests/wal/test_writer_behavior.hpp
+        lib/entry/key.cpp
+        lib/entry/key.hpp
+        lib/entry/core_constants.hpp
 )
 
 target_link_libraries(lsmtree PRIVATE spdlog::spdlog)

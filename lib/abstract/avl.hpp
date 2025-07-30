@@ -26,7 +26,7 @@ public:
 };
 
 template<typename T>
-class BinarySearchTree {
+class AVLTree {
 private:
     std::unique_ptr<Node<T> > _root;
 
@@ -71,7 +71,7 @@ public:
 
     [[nodiscard]] Node<T> *search(const T &key) const;
 
-    BinarySearchTree(): _root(nullptr), size_(0) {
+    AVLTree(): _root(nullptr), size_(0) {
     }
 };
 
@@ -94,12 +94,12 @@ int Node<T>::getBalance(const std::unique_ptr<Node<T> > &node) {
 }
 
 template<typename T>
-void BinarySearchTree<T>::clear() {
+void AVLTree<T>::clear() {
     _root = nullptr;
 }
 
 template<typename T>
-void BinarySearchTree<T>::rotateLeft(std::unique_ptr<Node<T> > &node) {
+void AVLTree<T>::rotateLeft(std::unique_ptr<Node<T> > &node) {
     const auto oldNode = node.get();
 
     auto newRoot = std::move(node->right);
@@ -114,7 +114,7 @@ void BinarySearchTree<T>::rotateLeft(std::unique_ptr<Node<T> > &node) {
 }
 
 template<typename T>
-void BinarySearchTree<T>::rotateRight(std::unique_ptr<Node<T> > &node) {
+void AVLTree<T>::rotateRight(std::unique_ptr<Node<T> > &node) {
     const auto oldNode = node.get();
 
     auto newRoot = std::move(node->left);
@@ -129,12 +129,12 @@ void BinarySearchTree<T>::rotateRight(std::unique_ptr<Node<T> > &node) {
 }
 
 template<typename T>
-void BinarySearchTree<T>::remove(const T &key) {
+void AVLTree<T>::remove(const T &key) {
     remove(_root, key);
 }
 
 template<typename T>
-void BinarySearchTree<T>::remove(std::unique_ptr<Node<T> > &root, const T &key) {
+void AVLTree<T>::remove(std::unique_ptr<Node<T> > &root, const T &key) {
     if (!root) return;
 
     if (std::less<T>{}(root->key, key)) {
@@ -184,12 +184,12 @@ void BinarySearchTree<T>::remove(std::unique_ptr<Node<T> > &root, const T &key) 
 
 
 template<typename T>
-void BinarySearchTree<T>::insert(const T &key) {
+void AVLTree<T>::insert(const T &key) {
     insert(_root, key);
 }
 
 template<typename T>
-void BinarySearchTree<T>::insert(std::unique_ptr<Node<T> > &root, const T &key) {
+void AVLTree<T>::insert(std::unique_ptr<Node<T> > &root, const T &key) {
     if (root == nullptr) {
         size_++;
         root = std::make_unique<Node<T> >(key);
@@ -230,7 +230,7 @@ void BinarySearchTree<T>::insert(std::unique_ptr<Node<T> > &root, const T &key) 
 }
 
 template<typename T>
-void BinarySearchTree<T>::inOrderIntoVector(const std::unique_ptr<Node<T> > &root, std::vector<T> &_v) const {
+void AVLTree<T>::inOrderIntoVector(const std::unique_ptr<Node<T> > &root, std::vector<T> &_v) const {
     if (root == nullptr) {
         return;
     }
@@ -241,7 +241,7 @@ void BinarySearchTree<T>::inOrderIntoVector(const std::unique_ptr<Node<T> > &roo
 }
 
 template<typename T>
-std::vector<T> BinarySearchTree<T>::toSortedVector() const {
+std::vector<T> AVLTree<T>::toSortedVector() const {
     std::vector<T> data;
     data.reserve(size_);
 
@@ -251,13 +251,13 @@ std::vector<T> BinarySearchTree<T>::toSortedVector() const {
 
 
 template<typename T>
-void BinarySearchTree<T>::inorder() const {
+void AVLTree<T>::inorder() const {
     inorder(_root);
     std::cout << std::endl;
 }
 
 template<typename T>
-void BinarySearchTree<T>::inorder(const std::unique_ptr<Node<T> > &root) {
+void AVLTree<T>::inorder(const std::unique_ptr<Node<T> > &root) {
     if (root == nullptr) {
         return;
     }
@@ -271,7 +271,7 @@ void BinarySearchTree<T>::inorder(const std::unique_ptr<Node<T> > &root) {
 }
 
 template<typename T>
-std::unique_ptr<Node<T> > &BinarySearchTree<T>::findLeftMost(std::unique_ptr<Node<T> > &node) {
+std::unique_ptr<Node<T> > &AVLTree<T>::findLeftMost(std::unique_ptr<Node<T> > &node) {
     if (!node) {
         throw std::invalid_argument("Cannot find leftmost of a null subtree");
     }
@@ -284,7 +284,7 @@ std::unique_ptr<Node<T> > &BinarySearchTree<T>::findLeftMost(std::unique_ptr<Nod
 }
 
 template<typename T>
-const std::unique_ptr<Node<T> > &BinarySearchTree<T>::findLeftMost(const std::unique_ptr<Node<T> > &node) {
+const std::unique_ptr<Node<T> > &AVLTree<T>::findLeftMost(const std::unique_ptr<Node<T> > &node) {
     if (!node) {
         throw std::invalid_argument("Cannot find leftmost of a null subtree");
     }
@@ -297,7 +297,7 @@ const std::unique_ptr<Node<T> > &BinarySearchTree<T>::findLeftMost(const std::un
 }
 
 template<typename T>
-std::unique_ptr<Node<T> > &BinarySearchTree<T>::findRightMost(std::unique_ptr<Node<T> > &node) {
+std::unique_ptr<Node<T> > &AVLTree<T>::findRightMost(std::unique_ptr<Node<T> > &node) {
     if (!node) {
         throw std::invalid_argument("Cannot find rightmost of a null subtree");
     }
@@ -310,7 +310,7 @@ std::unique_ptr<Node<T> > &BinarySearchTree<T>::findRightMost(std::unique_ptr<No
 }
 
 template<typename T>
-const std::unique_ptr<Node<T> > &BinarySearchTree<T>::findRightMost(const std::unique_ptr<Node<T> > &node) {
+const std::unique_ptr<Node<T> > &AVLTree<T>::findRightMost(const std::unique_ptr<Node<T> > &node) {
     if (!node) {
         throw std::invalid_argument("Cannot find rightmost of a null subtree");
     }
@@ -323,12 +323,12 @@ const std::unique_ptr<Node<T> > &BinarySearchTree<T>::findRightMost(const std::u
 }
 
 template<typename T>
-void BinarySearchTree<T>::printTree() const {
+void AVLTree<T>::printTree() const {
     printTree(_root, 0);
 }
 
 template<typename T>
-std::unique_ptr<Node<T> > &BinarySearchTree<T>::findNodeRef(std::unique_ptr<Node<T> > &root, const T &key) {
+std::unique_ptr<Node<T> > &AVLTree<T>::findNodeRef(std::unique_ptr<Node<T> > &root, const T &key) {
     if (root == nullptr || root->key == key) {
         return root;
     }
@@ -341,12 +341,12 @@ std::unique_ptr<Node<T> > &BinarySearchTree<T>::findNodeRef(std::unique_ptr<Node
 }
 
 template<typename T>
-Node<T> *BinarySearchTree<T>::search(const T &key) const {
+Node<T> *AVLTree<T>::search(const T &key) const {
     return search(_root, key);
 }
 
 template<typename T>
-Node<T> *BinarySearchTree<T>::search(const std::unique_ptr<Node<T> > &root, const T &key) {
+Node<T> *AVLTree<T>::search(const std::unique_ptr<Node<T> > &root, const T &key) {
     if (root == nullptr || root->key == key) {
         return root.get();
     }

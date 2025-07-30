@@ -103,7 +103,7 @@ namespace WAL {
          * @param entry The Entry object to append to the current WAL file.
          * @return true if the entry was successfully written to the WAL.
          */
-        bool append(const Entry &entry, FlushMode);
+        bool append(const core::Entry &entry, FlushMode);
 
         /**
          * Gracefully closes the current Write-Ahead Log (WAL) file by ensuring

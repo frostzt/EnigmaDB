@@ -10,7 +10,7 @@
 #include <thread>
 
 namespace WAL {
-    bool WALManager::append(const Entry &entry) const {
+    bool WALManager::append(const core::Entry &entry) const {
         const auto threadId = std::hash<std::thread::id>{}(std::this_thread::get_id());
         const size_t writerIdx = threadId % this->writersCount_;
         return this->writers_[writerIdx]->append(entry, FlushMode::FORCE_FLUSH);
@@ -22,7 +22,7 @@ namespace WAL {
         }
     }
 
-    void WALManager::loadAll(const std::function<void(Entry &&)> &replyFn) const {
+    void WALManager::loadAll(const std::function<void(core::Entry &&)> &replyFn) const {
         std::vector<std::filesystem::path> filepaths;
 
         // Iterate over the wal directory
@@ -48,15 +48,15 @@ namespace WAL {
         }
     }
 
-    std::vector<Entry> WALManager::loadAll() const {
-        std::vector<Entry> entries;
+    std::vector<core::Entry> WALManager::loadAll() const {
+        std::vector<core::Entry> entries;
 
-        this->loadAll([&entries](Entry &&entry) {
+        this->loadAll([&entries](core::Entry &&entry) {
             entries.push_back(std::move(entry));
         });
 
         // Sort all the entries
-        std::ranges::sort(entries, [](const Entry &a, const Entry &b) {
+        std::ranges::sort(entries, [](const core::Entry &a, const core::Entry &b) {
             return a.timestamp_ < b.timestamp_;
         });
 

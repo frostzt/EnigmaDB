@@ -31,7 +31,7 @@ namespace WAL {
         return fileStat.st_size;
     }
 
-    bool WALWriter::append(const Entry &entry, const FlushMode flushMode = FlushMode::FORCE_FLUSH) {
+    bool WALWriter::append(const core::Entry &entry, const FlushMode flushMode = FlushMode::FORCE_FLUSH) {
         std::lock_guard guard(this->writeMutex_);
 
         const auto bytesWritten = WAL::writeRecord(this->currentOutStream_, entry, flushMode);

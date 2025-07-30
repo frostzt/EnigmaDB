@@ -5,28 +5,41 @@
 #ifndef MEMTABLE_HPP
 #define MEMTABLE_HPP
 
-#include "../abstract/avl.hpp"
-#include "../entry/entry.hpp"
+#include <shared_mutex>
 
-class MemTable {
-private:
-    BinarySearchTree<Entry> tree_;
-    size_t sizeThreshold_;
-    size_t currentSize_;
+#include "lib/abstract/avl.hpp"
+#include "lib/entry/entry.hpp"
 
-public:
-    explicit MemTable(const size_t threshold = 1000): sizeThreshold_(threshold), currentSize_(0) {
-    }
+namespace memtable {
+    class MemTable {
+    public:
+        using KeyType = std::string;
 
-    void put(const Entry &entry);
+        explicit MemTable(std::string tableName): tableName_(std::move(tableName)) {
+        }
 
-    void remove(const std::string &primaryKey);
+        void put(const Entry &entry) const;
 
-    Node<Entry> *get(const std::string &primaryKey) const;
+        std::optional<Entry> get(const std::string &key) const;
 
-    [[nodiscard]] bool shouldFlush() const;
+        void del(const std::string &key, uint64_t timestamp);
 
-    std::vector<Entry> flush();
-};
+        void freeze();
+
+        bool isFrozen() const;
+
+        std::vector<Entry> orderedEntries() const;
+
+        void applyEntry(const Entry &entry);
+
+        size_t size() const;
+
+    private:
+        std::string tableName_;
+        std::unique_ptr<AVLTree<Entry> > tree_;
+        mutable std::shared_mutex rwMutex_;
+        std::atomic<bool> frozen_;
+    };
+} // namespace memtable
 
 #endif //MEMTABLE_HPP

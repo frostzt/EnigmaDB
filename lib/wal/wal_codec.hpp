@@ -34,7 +34,7 @@ namespace WAL {
      *                   Defaults to `FlushMode::NO_FLUSH`.
      * @return The total number of bytes written to the output stream.
      */
-    inline uint32_t writeRecord(std::ofstream &out, const Entry &entry,
+    inline uint32_t writeRecord(std::ofstream &out, const core::Entry &entry,
                                 const FlushMode forceFlush = FlushMode::NO_FLUSH) {
         assert(out.is_open());
 
@@ -71,7 +71,7 @@ namespace WAL {
      * @return An optional Entry object representing the deserialized record.
      *         Returns std::nullopt if the record cannot be read or deserialized.
      */
-    inline std::optional<Entry> readRecord(std::ifstream &in) {
+    inline std::optional<core::Entry> readRecord(std::ifstream &in) {
         assert(in.is_open());
 
         // Read the magic bytes
@@ -98,7 +98,7 @@ namespace WAL {
         }
 
         // Deserialize the entry
-        const auto entryOpt = Entry::deserialize(payload.data(), payload.size());
+        const auto entryOpt = core::Entry::deserialize(payload.data(), payload.size());
         if (!entryOpt.has_value()) {
             // spdlog::warn("WAL: failed to deserialize entry");
             return std::nullopt;
