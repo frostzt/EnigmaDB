@@ -2,14 +2,12 @@
 // Created by frostzt on 7/24/2025.
 //
 
-
 #include "wal_manager.hpp"
 #include "wal_codec.hpp"
 
 #include <algorithm>
 #include <filesystem>
 #include <thread>
-
 
 namespace WAL {
     bool WALManager::append(const Entry &entry) const {
@@ -63,5 +61,32 @@ namespace WAL {
         });
 
         return entries;
+    }
+
+    void WALManager::startFlushThread() {
+        if (this->flushThreadRunning_) return;
+        this->flushThreadRunning_ = true;
+
+        this->flushThread_ = std::thread([this]() {
+            while (this->flushThreadRunning_) {
+                for (const auto &writer: this->writers_) {
+                    writer->flush();
+                }
+
+                std::this_thread::sleep_for(this->flushInterval_);
+            }
+        });
+    }
+
+
+    void WALManager::stopFlushThread() {
+        if (!this->flushThreadRunning_) return;
+        this->flushThreadRunning_ = false;
+
+        if (this->flushThread_.joinable()) {
+            this->flushThread_.join();
+        } else {
+            this->flushThread_.detach();
+        }
     }
 } // namespace WAL
