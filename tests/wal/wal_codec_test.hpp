@@ -4,8 +4,8 @@
 
 #ifndef WAL_CODEC_TEST_HPP
 #define WAL_CODEC_TEST_HPP
-#include "tests/test_abs.hpp"
 
+#include "tests/test_abs.hpp"
 
 class TestFullWALCodecTrip final : public TestCase {
 public:

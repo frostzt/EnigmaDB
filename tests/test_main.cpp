@@ -11,6 +11,7 @@
 #include "timestamp_generator_test.hpp"
 #include "utils/byte_parser.hpp"
 #include "utils/byte_utils.hpp"
+#include "wal/test_writer_behavior.hpp"
 #include "wal/wal_codec_test.hpp"
 #include "wal/wal_manager_test.hpp"
 
@@ -30,6 +31,8 @@ int main() {
     tests.emplace_back(std::make_unique<TestFullWALCodecTrip>());
     tests.emplace_back(std::make_unique<TestWALMultipleEntries>());
     tests.emplace_back(std::make_unique<TestWALConcurrentAppendsWithRotation>());
+    tests.emplace_back(std::make_unique<TestAppendForSingleWriter>());
+    tests.emplace_back(std::make_unique<TestWriterFlushToDisk>());
 
     std::unordered_map<std::string, std::vector<TestCase *> > grouped;
     std::vector<std::unique_ptr<TestCase> > testInstances;

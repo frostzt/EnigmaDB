@@ -9,15 +9,6 @@
 
 #include "lib/entry/entry.hpp"
 
-bool compareEntries(const Entry &e1, const Entry &e2) {
-    if (e1.tableName != e2.tableName) return false;
-    if (e1.primaryKey_ != e2.primaryKey_) return false;
-    if (e1.isTombstone_ != e2.isTombstone_) return false;
-    if (e1.timestamp_ != e2.timestamp_) return false;
-    if (e1.rowData_ != e2.rowData_) return false;
-    return true;
-}
-
 bool TestFullWALCodecTrip::execute() const {
     const Entry entry("customers", "cid", {
                           {"name", std::string("Sourav")},
@@ -133,13 +124,13 @@ bool TestWALMultipleEntries::execute() const {
     }
 
     int result = false;
-    result = compareEntries(sourav, entries[0]);
+    result = Entry::compareEntries(sourav, entries[0]);
     if (!result) return false;
 
-    result = compareEntries(sudheer, entries[1]);
+    result = Entry::compareEntries(sudheer, entries[1]);
     if (!result) return false;
 
-    result = compareEntries(sachin, entries[2]);
+    result = Entry::compareEntries(sachin, entries[2]);
 
     in.close();
     std::filesystem::remove(fileName);

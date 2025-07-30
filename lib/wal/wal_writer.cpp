@@ -31,10 +31,10 @@ namespace WAL {
         return fileStat.st_size;
     }
 
-    bool WALWriter::append(const Entry &entry) {
+    bool WALWriter::append(const Entry &entry, const FlushMode flushMode = FlushMode::FORCE_FLUSH) {
         std::lock_guard guard(this->writeMutex_);
 
-        const auto bytesWritten = WAL::writeRecord(this->currentOutStream_, entry, FlushMode::FORCE_FLUSH);
+        const auto bytesWritten = WAL::writeRecord(this->currentOutStream_, entry, flushMode);
         this->currentFileSize_ += bytesWritten;
 
         // Soft rotation, this might exceed file size, but that would happen at max by 1 entry

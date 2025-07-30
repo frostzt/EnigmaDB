@@ -12,6 +12,7 @@
 #include <mutex>
 #include <string>
 
+#include "wal_codec.hpp"
 #include "lib/entry/entry.hpp"
 
 namespace WAL {
@@ -102,7 +103,7 @@ namespace WAL {
          * @param entry The Entry object to append to the current WAL file.
          * @return true if the entry was successfully written to the WAL.
          */
-        bool append(const Entry &entry);
+        bool append(const Entry &entry, FlushMode);
 
         /**
          * Gracefully closes the current Write-Ahead Log (WAL) file by ensuring
@@ -135,6 +136,18 @@ namespace WAL {
          */
         uint32_t getCurrentFileNumber() const {
             return this->currentFileNumber_;
+        }
+
+        /**
+         * Checks if the current output stream is in a good state.
+         * The method queries the `std::ofstream` object to determine if it is still
+         * valid for writing operations. A "good" state indicates that no errors
+         * have occurred, and the stream is ready for I/O operations.
+         *
+         * @return true if the current output stream is in a good state, false otherwise.
+         */
+        bool isStreamGood() const {
+            return this->currentOutStream_.good();
         }
     };
 } // namespace WAL

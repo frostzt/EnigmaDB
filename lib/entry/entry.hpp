@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <optional>
 
-#include "../abstract/timestamp_generator.hpp"
+#include "lib/abstract/timestamp_generator.hpp"
 
 using Field = std::variant<int, std::string, double>;
 using Row = std::unordered_map<std::string, Field>;
@@ -37,6 +37,15 @@ public:
     static std::optional<Entry> deserialize(const std::byte *data, size_t length);
 
     std::string toHex() const;
+
+    static bool compareEntries(const Entry &e1, const Entry &e2) {
+        if (e1.tableName != e2.tableName) return false;
+        if (e1.primaryKey_ != e2.primaryKey_) return false;
+        if (e1.isTombstone_ != e2.isTombstone_) return false;
+        if (e1.timestamp_ != e2.timestamp_) return false;
+        if (e1.rowData_ != e2.rowData_) return false;
+        return true;
+    }
 
     // AVL Tree needs to compare Entries based on primaryKey
     bool operator<(const Entry &other) const {
