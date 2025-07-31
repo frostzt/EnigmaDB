@@ -30,9 +30,9 @@ int main() {
     // WAL
     tests.emplace_back(std::make_unique<TestFullWALCodecTrip>());
     tests.emplace_back(std::make_unique<TestWALMultipleEntries>());
-    tests.emplace_back(std::make_unique<TestWALConcurrentAppendsWithRotation>());
     tests.emplace_back(std::make_unique<TestAppendForSingleWriter>());
     tests.emplace_back(std::make_unique<TestWriterFlushToDisk>());
+    tests.emplace_back(std::make_unique<TestWALConcurrentAppendsWithRotation>());
 
     std::unordered_map<std::string, std::vector<TestCase *> > grouped;
     std::vector<std::unique_ptr<TestCase> > testInstances;
