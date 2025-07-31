@@ -13,6 +13,9 @@
 #include <variant>
 #include <optional>
 
+#include "lib/entry/core_constants.hpp"
+#include "lib/entry/key.hpp"
+
 
 namespace Utility {
     enum FieldTag : std::underlying_type_t<std::byte> {
@@ -22,8 +25,6 @@ namespace Utility {
     };
 
     static constexpr std::string_view magic = "ENTRY";
-
-    using Field = std::variant<int, std::string, double>;
 
     class ByteParser {
     private:
@@ -82,9 +83,13 @@ namespace Utility {
 
         [[nodiscard]] std::string readString();
 
-        static void writeVariant(std::vector<std::byte> &out, const Field &value);
+        static void writeVariant(std::vector<std::byte> &out, const core::Field &value);
 
-        [[nodiscard]] std::optional<Field> readVariant();
+        [[nodiscard]] std::optional<core::Field> readVariant();
+
+        static void writeKey(std::vector<std::byte> &out, const core::Key &key);
+
+        core::Key readKey();
 
         [[nodiscard]] std::byte readByte();
 

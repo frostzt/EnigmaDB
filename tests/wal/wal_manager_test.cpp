@@ -36,7 +36,8 @@ bool TestWALConcurrentAppendsWithRotation::execute() const {
     for (size_t i = 0; i < threadCount; ++i) {
         threads.emplace_back([&manager, &threadResults, i]() {
             for (size_t j = 0; j < perThreadCount; ++j) {
-                const bool ok = manager.append(Entry("customer", "cid_" + std::to_string(j), {}, false));
+                const bool ok = manager.append(
+                    core::Entry("customer", core::Key{{std::string("cid_" + std::to_string(j))}}, {}, false));
                 threadResults[i].push_back(ok);
             }
         });

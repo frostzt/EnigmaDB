@@ -21,7 +21,7 @@ namespace core {
         for (int i = 0; i < 8; i++) byteV.push_back(static_cast<std::byte>(0)); // placeholder
 
         Utility::ByteParser::writeString(byteV, this->tableName);
-        Utility::ByteParser::writeString(byteV, this->primaryKey_);
+        Utility::ByteParser::writeKey(byteV, this->primaryKey_);
         Utility::ByteParser::writeUint16(byteV, this->rowData_.size());
 
         for (const auto &[key, value]: this->rowData_) {
@@ -54,14 +54,10 @@ namespace core {
 
         Entry entry{};
 
-        const auto tableName = parser.readString();
-        entry.tableName = tableName;
-
-        const auto primaryKey = parser.readString();
-        entry.primaryKey_ = primaryKey;
+        entry.tableName = parser.readString();
+        entry.primaryKey_ = std::move(parser.readKey());
 
         const auto rowSize = parser.readUint16();
-
         for (size_t i = 0; i < static_cast<size_t>(rowSize); i++) {
             const std::string key = parser.readString();
             const auto variant = parser.readVariant();
@@ -74,11 +70,8 @@ namespace core {
             entry.rowData_.emplace(key, *variant);
         }
 
-        const auto isTombstone = static_cast<bool>(parser.readByte());
-        entry.isTombstone_ = isTombstone;
-
-        const auto timestamp = parser.readUint64();
-        entry.timestamp_ = timestamp;
+        entry.isTombstone_ = static_cast<bool>(parser.readByte());
+        entry.timestamp_ = parser.readUint64();
 
         const uint32_t expected = parser.readUint32();
         if (const uint32_t actual = Utility::computeCRC32(data, 0, totalSize - 4); expected != actual) {

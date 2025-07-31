@@ -6,7 +6,7 @@
 #include "lib/entry/entry.hpp"
 
 bool TestConvertingToByes::execute() const {
-    const Entry entry("customer", "cid", {}, false);
+    const core::Entry entry("customer", core::Key{{std::string("cid")}}, {}, false);
 
     auto serialized = entry.serialize();
 

@@ -75,7 +75,7 @@ namespace Utility {
 		return str;
 	}
 
-	void ByteParser::writeVariant(std::vector<std::byte> &out, const Utility::Field &value) {
+	void ByteParser::writeVariant(std::vector<std::byte> &out, const core::Field &value) {
 		if (std::holds_alternative<int>(value)) {
 			out.push_back(static_cast<std::byte>(FieldTag::INT)); // int flag
 			const int v = std::get<int>(value);
@@ -96,7 +96,7 @@ namespace Utility {
 		}
 	}
 
-	std::optional<Field> ByteParser::readVariant() {
+	std::optional<core::Field> ByteParser::readVariant() {
 		const int typeFlag = static_cast<int>(this->data_[this->cursor_]);
 		cursor_++;
 
@@ -112,6 +112,26 @@ namespace Utility {
 		} else {
 			return std::nullopt;
 		}
+	}
+
+	void ByteParser::writeKey(std::vector<std::byte> &out, const core::Key& key) {
+		writeUint16(out, key.parts_.size());
+		for (const auto &part : key.parts_) {
+			writeVariant(out, part);
+		}
+	}
+
+	core::Key ByteParser::readKey() {
+		const uint16_t size = readUint16();
+		std::vector<core::Field> parts;
+
+		for (int i = 0; i < size; ++i) {
+			auto val = readVariant();
+			if (!val.has_value()) throw std::runtime_error("Invalid field in PK");
+			parts.push_back(*val);
+		}
+
+		return core::Key{std::move(parts)};
 	}
 
 	std::byte ByteParser::readByte() {

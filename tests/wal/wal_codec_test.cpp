@@ -10,7 +10,7 @@
 #include "lib/entry/entry.hpp"
 
 bool TestFullWALCodecTrip::execute() const {
-    const Entry entry("customers", "cid", {
+    const core::Entry entry("customers", core::Key{{std::string("cid")}}, {
                           {"name", std::string("Sourav")},
                           {"age", 25},
                           {"balance", 999.999},
@@ -78,19 +78,19 @@ bool TestFullWALCodecTrip::execute() const {
 }
 
 bool TestWALMultipleEntries::execute() const {
-    const Entry sourav("customers", "cid", {
+    const core::Entry sourav("customers", core::Key{{std::string("cid")}}, {
                           {"name", std::string("Sourav")},
                           {"age", 25},
                           {"balance", 1000},
                       }, false);
 
-    const Entry sudheer("customers", "cid", {
+    const core::Entry sudheer("customers", core::Key{{std::string("cid")}}, {
                           {"name", std::string("Sudheer")},
                           {"age", 25},
                           {"balance", 2000},
                       }, false);
 
-    const Entry sachin("customers", "cid", {
+    const core::Entry sachin("customers", core::Key{{std::string("cid")}}, {
                           {"name", std::string("Sachin")},
                           {"age", 27},
                           {"balance", 5000.500},
@@ -116,7 +116,7 @@ bool TestWALMultipleEntries::execute() const {
         return false;
     }
 
-    std::vector<Entry> entries;
+    std::vector<core::Entry> entries;
     while (true) {
         const auto readEntry = WAL::readRecord(in);
         if (!readEntry.has_value()) break;
@@ -124,13 +124,13 @@ bool TestWALMultipleEntries::execute() const {
     }
 
     int result = false;
-    result = Entry::compareEntries(sourav, entries[0]);
+    result = core::Entry::compareEntries(sourav, entries[0]);
     if (!result) return false;
 
-    result = Entry::compareEntries(sudheer, entries[1]);
+    result = core::Entry::compareEntries(sudheer, entries[1]);
     if (!result) return false;
 
-    result = Entry::compareEntries(sachin, entries[2]);
+    result = core::Entry::compareEntries(sachin, entries[2]);
 
     in.close();
     std::filesystem::remove(fileName);

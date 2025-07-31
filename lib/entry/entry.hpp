@@ -7,8 +7,8 @@
 #include <variant>
 #include <optional>
 
-#include "lib/entry/key.hpp""
-#include "lib/entry/core_constants.hpp""
+#include "lib/entry/key.hpp"
+#include "lib/entry/core_constants.hpp"
 #include "lib/abstract/timestamp_generator.hpp"
 
 namespace core {

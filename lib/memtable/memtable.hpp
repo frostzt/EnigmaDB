@@ -18,9 +18,9 @@ namespace memtable {
         explicit MemTable(std::string tableName): tableName_(std::move(tableName)) {
         }
 
-        void put(const Entry &entry) const;
+        void put(const core::Entry &entry) const;
 
-        std::optional<Entry> get(const std::string &key) const;
+        std::optional<core::Entry> get(const std::string &key) const;
 
         void del(const std::string &key, uint64_t timestamp);
 
@@ -28,15 +28,15 @@ namespace memtable {
 
         bool isFrozen() const;
 
-        std::vector<Entry> orderedEntries() const;
+        std::vector<core::Entry> orderedEntries() const;
 
-        void applyEntry(const Entry &entry);
+        void applyEntry(const core::Entry &entry);
 
         size_t size() const;
 
     private:
         std::string tableName_;
-        std::unique_ptr<AVLTree<Entry> > tree_;
+        std::unique_ptr<AVLTree<core::Entry> > tree_;
         mutable std::shared_mutex rwMutex_;
         std::atomic<bool> frozen_;
     };

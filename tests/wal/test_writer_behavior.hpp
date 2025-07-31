@@ -28,7 +28,7 @@ public:
         const WAL::WALManager manager(1, 4_KB, path);
 
         // Create a new wal file by adding an entry
-        const Entry sourav("customer", "cid", {{"name", "sourav"}}, false);
+        const core::Entry sourav("customer", core::Key{{std::string("cid")}}, {{"name", "sourav"}}, false);
         if (const auto appended = manager.append(sourav); !appended) return false;
 
         // Check if the new file was made
@@ -44,17 +44,17 @@ public:
         // Read the first entries and validate them
         const auto initialEntries = manager.loadAll();
         if (initialEntries.size() != 1) return false;
-        if (!Entry::compareEntries(initialEntries[0], sourav)) return false;
+        if (!core::Entry::compareEntries(initialEntries[0], sourav)) return false;
 
         // Add another entry
-        const Entry gourav("customer", "cid", {{"name", "gourav"}}, false);
+        const core::Entry gourav("customer", core::Key{{std::string("cid")}}, {{"name", "gourav"}}, false);
         if (const auto appended = manager.append(gourav); !appended) return false;
 
         // Check if the append, appended the entry
         const auto finalEntries = manager.loadAll();
         if (finalEntries.size() != 2) return false;
-        if (!Entry::compareEntries(finalEntries[0], sourav)) return false;
-        if (!Entry::compareEntries(finalEntries[1], gourav)) return false;
+        if (!core::Entry::compareEntries(finalEntries[0], sourav)) return false;
+        if (!core::Entry::compareEntries(finalEntries[1], gourav)) return false;
 
         manager.close();
         std::filesystem::remove_all(path);
@@ -81,7 +81,7 @@ public:
         if (!writer.isStreamGood()) return false;
 
         // Write an entry to the buffer
-        const Entry sourav("customer", "cid", {{"name", "sourav"}}, false);
+        const core::Entry sourav("customer", core::Key{{std::string("cid")}}, {{"name", "sourav"}}, false);
         writer.append(sourav, WAL::FlushMode::NO_FLUSH); // EXPLICITLY DENYING fsync
 
         // Validate if the file exists

@@ -10,14 +10,14 @@
 #include "lib/wal/wal_codec.hpp"
 
 bool TestFullRoundTripWAL::execute() const {
-    const Entry entry("customers", "cid", {
+    const core::Entry entry("customers", core::Key{{std::string("cid")}}, {
                           {"name", std::string("Sourav")},
                           {"age", 25},
                           {"balance", 999.999},
                       }, false);
 
     const auto serializedEntry = entry.serialize();
-    const auto deserialized = Entry::deserialize(serializedEntry.data(), serializedEntry.size());
+    const auto deserialized = core::Entry::deserialize(serializedEntry.data(), serializedEntry.size());
     if (!deserialized) {
         std::cerr << "Deserialization failed" << std::endl;
         return false;
@@ -58,7 +58,7 @@ bool TestFullRoundTripWAL::execute() const {
 }
 
 bool TestChecksumCorruption::execute() const {
-    const Entry entry("customers", "cid", {
+    const core::Entry entry("customers", core::Key{{std::string("cid")}}, {
                           {"name", std::string("Sourav")},
                           {"age", 25},
                           {"balance", 999.999},
@@ -69,6 +69,6 @@ bool TestChecksumCorruption::execute() const {
     // Simulate corruption by flipping lsb
     serializedEntry.back() ^= static_cast<std::byte>(0x01);
 
-    const auto deserialized = Entry::deserialize(serializedEntry.data(), serializedEntry.size());
+    const auto deserialized = core::Entry::deserialize(serializedEntry.data(), serializedEntry.size());
     return !deserialized.has_value(); // nullopt should be returned if checksum is invalid
 }

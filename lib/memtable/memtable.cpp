@@ -7,11 +7,11 @@
 #include "../abstract/timestamp_generator.hpp"
 
 namespace memtable {
-    void MemTable::put(const Entry &entry) const {
+    void MemTable::put(const core::Entry &entry) const {
         this->tree_->insert(entry);
     }
 
-    std::optional<Entry> MemTable::get(const std::string &key) const {
+    std::optional<core::Entry> MemTable::get(const std::string &key) const {
         // return this->tree_->search(key);
     }
 } // namespace MemTable

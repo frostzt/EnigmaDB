@@ -25,23 +25,26 @@ namespace core {
                 const auto &a = this->parts_[i];
                 const auto &b = other.parts_[i];
 
+                // Cross-type comparison fallback (int < double < string)
                 if (a.index() != b.index()) {
-                    return a.index() < b.index(); // int < double < string
+                    return a.index() < b.index();
                 }
 
-                const bool less = std::visit([&](auto &&x, auto &&y) -> bool {
-                    using A = std::decay_t<decltype(x)>;
-                    using B = std::decay_t<decltype(y)>;
-
-                    if constexpr (std::is_same_v<A, B>) {
-                        return x < y;
-                    } else {
-                        return false;
-                    }
-                }, a, b);
+                // Same-type comparison only — safely unwrap and compare
+                const bool less = std::visit(
+                    [](const auto &x, const auto &y) -> bool {
+                        using T = std::decay_t<decltype(x)>;
+                        if constexpr (std::is_same_v<T, decltype(y)>) {
+                            return x < y;
+                        } else {
+                            return false;  // Should never happen after index() check
+                        }
+                    },
+                    a, b
+                );
 
                 if (less) return true;
-                if (std::visit([](auto &&x, auto &&y) { return x != y; }, a, b)) return false;
+                if (a != b) return false;  // compare whole field variant if not less
             }
 
             return this->parts_.size() < other.parts_.size();
