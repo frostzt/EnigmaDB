@@ -35,12 +35,15 @@ namespace core {
 
         std::string toHex() const;
 
-        static bool compareEntries(const Entry &e1, const Entry &e2) {
+        static bool compareEntries(const Entry &e1, const Entry &e2, const bool compareTs = true) {
             if (e1.tableName != e2.tableName) return false;
             if (e1.primaryKey_ != e2.primaryKey_) return false;
             if (e1.isTombstone_ != e2.isTombstone_) return false;
-            if (e1.timestamp_ != e2.timestamp_) return false;
             if (e1.rowData_ != e2.rowData_) return false;
+            if (compareTs) {
+                if (e1.timestamp_ != e2.timestamp_) return false;
+            }
+
             return true;
         }
 

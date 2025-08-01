@@ -5,6 +5,7 @@
 #ifndef KEY_HPP
 #define KEY_HPP
 
+#include <iostream>
 #include <vector>
 #include <sstream>
 
@@ -33,18 +34,19 @@ namespace core {
                 // Same-type comparison only — safely unwrap and compare
                 const bool less = std::visit(
                     [](const auto &x, const auto &y) -> bool {
-                        using T = std::decay_t<decltype(x)>;
-                        if constexpr (std::is_same_v<T, decltype(y)>) {
+                        using Tx = std::decay_t<decltype(x)>;
+                        using Ty = std::decay_t<decltype(y)>;
+                        if constexpr (std::is_same_v<Tx, Ty>) {
                             return x < y;
                         } else {
-                            return false;  // Should never happen after index() check
+                            return false; // Should never happen after index() check
                         }
                     },
                     a, b
                 );
 
                 if (less) return true;
-                if (a != b) return false;  // compare whole field variant if not less
+                if (a != b) return false; // compare whole field variant if not less
             }
 
             return this->parts_.size() < other.parts_.size();

@@ -144,5 +144,5 @@ namespace Utility {
 		           reinterpret_cast<const std::byte *>(magic.data() + magic.size())
 		);
 	}
-}
+} // namespace Utility
 
