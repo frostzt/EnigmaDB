@@ -9,6 +9,7 @@
 
 #include "test_abs.hpp"
 #include "timestamp_generator_test.hpp"
+#include "memtable/test_memtable_put_get.hpp"
 #include "utils/byte_parser.hpp"
 #include "utils/byte_utils.hpp"
 #include "wal/test_writer_behavior.hpp"
@@ -33,6 +34,10 @@ int main() {
     tests.emplace_back(std::make_unique<TestAppendForSingleWriter>());
     tests.emplace_back(std::make_unique<TestWriterFlushToDisk>());
     tests.emplace_back(std::make_unique<TestWALConcurrentAppendsWithRotation>());
+
+    // MemTable
+    tests.emplace_back(std::make_unique<TestMemTablePutGet>());
+    tests.emplace_back(std::make_unique<TestMemTablePutGetWithMultipleEntries>());
 
     std::unordered_map<std::string, std::vector<TestCase *> > grouped;
     std::vector<std::unique_ptr<TestCase> > testInstances;

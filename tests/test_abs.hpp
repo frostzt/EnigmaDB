@@ -5,7 +5,13 @@
 #ifndef TEST_ABS_HPP
 #define TEST_ABS_HPP
 
+#include <iostream>
 #include <string>
+
+inline bool failTest(const std::string& msg) {
+    std::cout << msg << std::endl;
+    return false;
+}
 
 class TestCase {
 public:
