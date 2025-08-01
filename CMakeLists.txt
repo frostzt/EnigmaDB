@@ -59,6 +59,13 @@ add_executable(lsmtree
         lib/entry/key.cpp
         lib/entry/key.hpp
         lib/entry/core_constants.hpp
+        tests/memtable/test_memtable_put_get.hpp
+        lib/datatypes/field.hpp
+        lib/datatypes/field.cpp
+        lib/datatypes/type_descriptor.cpp
+        lib/datatypes/type_descriptor.hpp
+        lib/datatypes/builtin_descriptors.hpp
+        lib/datatypes/types/uuid.hpp
 )
 
 target_link_libraries(lsmtree PRIVATE spdlog::spdlog)
