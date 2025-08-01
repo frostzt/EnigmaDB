@@ -124,47 +124,7 @@
 
 ---
 
-## 5. Project Directory Structure (Suggested)
-
-```
-enigma/
-├── include/
-│   ├── wal/
-│   ├── memtable/
-│   ├── sstable/
-│   ├── clock/
-│   ├── query/
-│   ├── coordinator/
-│   ├── replication/
-│   ├── network/
-│   └── utils/
-├── src/
-│   ├── wal/
-│   ├── memtable/
-│   ├── sstable/
-│   ├── clock/
-│   ├── query/
-│   ├── coordinator/
-│   ├── replication/
-│   ├── network/
-│   └── utils/
-├── tests/
-│   ├── wal/
-│   ├── memtable/
-│   ├── sstable/
-│   ├── replication/
-│   ├── network/
-│   └── ...
-├── scripts/
-│   └── benchmark/, io_profiler/, compaction_stats/
-├── build/
-├── CMakeLists.txt
-└── README.md
-```
-
----
-
-## 6. Development Milestones
+## 5. Development Milestones
 
 ### ✅ Phase 1: WAL Engine
 
@@ -227,7 +187,7 @@ enigma/
 
 ---
 
-## 7. Notes for Contributor Engineers
+## 6. Notes for Contributor Engineers
 
 * Every entry in WAL and MemTable must be timestamped (HLC)
 * SSTable files are immutable once flushed
@@ -238,7 +198,7 @@ enigma/
 
 ---
 
-## 8. Future Work
+## 7. Future Work
 
 * RocksDB-style tiered compaction
 * Secondary indexes
@@ -249,13 +209,13 @@ enigma/
 
 ---
 
-## 9. License
+## 8. License
 
 MIT or Apache 2.0 — TBD
 
 ---
 
-## 10. Author
+## 9. Author
 
 Sourav Singh Rawat
 [https://github.com/frostzt](https://github.com/frostzt)
