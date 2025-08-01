@@ -1,0 +1,2 @@
+1. Durable queues
+2. Redis and DB? Ability to add cache provider in DB (write through cache strat)
