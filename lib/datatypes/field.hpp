@@ -5,6 +5,8 @@
 #ifndef FIELD_HPP
 #define FIELD_HPP
 
+#include "type_registry.hpp"
+
 #include <cassert>
 #include <chrono>
 #include <vector>
@@ -45,7 +47,7 @@ namespace core::datatypes {
         std::chrono::system_clock::time_point
     >;
 
-    bool valueMatchesType(const FieldValue& val, FieldType type);
+    bool valueMatchesType(const FieldValue &val, FieldType type);
 
     /**
      * @struct Field
@@ -76,13 +78,22 @@ namespace core::datatypes {
             assert(valueMatchesType(value_, type_));
         };
 
-        bool isNull() const;
+        [[nodiscard]] bool isNull() const;
 
-        bool operator==(const Field &) const;
+        [[nodiscard]] ITypeDescriptor* getDescriptor() const {
+            const ITypeDescriptor *desc = this->descriptor_ ? this->descriptor_.get() : TypeRegistry::get(this->type_);
+            return desc;
+        }
 
-        bool operator<(const Field &) const;
+        bool operator==(const Field &other) const {
+            return getDescriptor()->equals(this->value_, other.value_);
+        }
 
-        std::string toString() const;
+        bool operator<(const Field &other) const {
+            return getDescriptor()->lessThan(this->value_, other.value_);
+        }
+
+        [[nodiscard]] std::string toString() const;
     };
 } // namespace core::datatypes
 
