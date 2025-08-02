@@ -62,10 +62,14 @@ add_executable(lsmtree
         tests/memtable/test_memtable_put_get.hpp
         lib/datatypes/field.hpp
         lib/datatypes/field.cpp
-        lib/datatypes/type_descriptor.cpp
         lib/datatypes/type_descriptor.hpp
-        lib/datatypes/builtin_descriptors.hpp
+        lib/datatypes/comparator.hpp
         lib/datatypes/types/uuid.hpp
+        lib/datatypes/serializer.hpp
+        lib/datatypes/default_descriptor.hpp
+        lib/datatypes/serializers/core_serializers.hpp
+        lib/datatypes/type_registry.cpp
+        lib/datatypes/type_registry.hpp
 )
 
 target_link_libraries(lsmtree PRIVATE spdlog::spdlog)
