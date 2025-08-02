@@ -18,6 +18,12 @@ namespace Utility {
 		return static_cast<uint16_t>(lsb | (msb << 8));
 	}
 
+	uint16_t ByteParser::readUint16(const std::byte *data, const size_t offset) {
+		const auto lsb = static_cast<uint8_t>(data[offset]);
+		const auto msb = static_cast<uint8_t>(data[offset + 1]);
+		return static_cast<uint16_t>(lsb | (msb << 8));
+	}
+
 	void ByteParser::writeUint32(std::vector<std::byte> &out, const uint32_t value) {
 		for (int i = 0; i < 4; i++) {
 			out.push_back(static_cast<std::byte>((value >> 8 * i) & 0xFF));

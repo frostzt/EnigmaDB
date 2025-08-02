@@ -45,6 +45,8 @@ namespace Utility {
         */
         static void writeUint16(std::vector<std::byte> &out, uint16_t value);
 
+        static uint16_t readUint16(const std::byte *data, size_t offset);
+
         [[nodiscard]] uint16_t readUint16();
 
         /**
