@@ -21,6 +21,9 @@ namespace core::datatypes {
         explicit UUID(const std::string &value): _value(stringToUuid(value)) {
         };
 
+        explicit UUID(const std::array<uint8_t, 16> &value): _value(value) {
+        };
+
         [[nodiscard]] std::string toString() const {
             return uuidToString(_value);
         }
