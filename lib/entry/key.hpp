@@ -13,11 +13,11 @@
 
 namespace core {
     struct Key {
-        std::vector<Field> parts_;
+        std::vector<datatypes::Field> parts_;
 
         Key() = default;
 
-        explicit Key(std::vector<Field> components_): parts_(std::move(components_)) {
+        explicit Key(std::vector<datatypes::Field> components_): parts_(std::move(components_)) {
         }
 
         bool operator<(const Key &other) const {
@@ -26,27 +26,8 @@ namespace core {
                 const auto &a = this->parts_[i];
                 const auto &b = other.parts_[i];
 
-                // Cross-type comparison fallback (int < double < string)
-                if (a.index() != b.index()) {
-                    return a.index() < b.index();
-                }
-
-                // Same-type comparison only — safely unwrap and compare
-                const bool less = std::visit(
-                    [](const auto &x, const auto &y) -> bool {
-                        using Tx = std::decay_t<decltype(x)>;
-                        using Ty = std::decay_t<decltype(y)>;
-                        if constexpr (std::is_same_v<Tx, Ty>) {
-                            return x < y;
-                        } else {
-                            return false; // Should never happen after index() check
-                        }
-                    },
-                    a, b
-                );
-
-                if (less) return true;
-                if (a != b) return false; // compare whole field variant if not less
+                if (a < b) return true;
+                if (b < a) return false;
             }
 
             return this->parts_.size() < other.parts_.size();
@@ -60,8 +41,8 @@ namespace core {
             std::ostringstream oss;
             oss << "[";
             for (size_t i = 0; i < this->parts_.size(); ++i) {
-                std::visit([&](auto &&x) { oss << x; }, this->parts_[i]);
-                if (i != this->parts_.size() - 1) oss << ",";
+                oss << this->parts_[i].toString();
+                if (i != this->parts_.size() - 1) oss << ", ";
             }
 
             oss << "]";
@@ -69,6 +50,5 @@ namespace core {
         };
     };
 } // namespace core
-
 
 #endif //KEY_HPP
