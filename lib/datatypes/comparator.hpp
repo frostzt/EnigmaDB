@@ -5,13 +5,14 @@
 #ifndef BUILTIN_DESCRIPTORS_HPP
 #define BUILTIN_DESCRIPTORS_HPP
 
-#include <string>
+#include <cassert>
 
 #include "lib/datatypes/type_descriptor.hpp"
 
 namespace core::datatypes {
     template<typename T>
-    struct ComparatorOnly<T> {
+    class ComparatorOnly {
+    public:
         virtual ~ComparatorOnly() = default;
 
         [[nodiscard]] virtual bool equals(const FieldValue &x, const FieldValue &y) const {

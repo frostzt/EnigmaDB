@@ -2,6 +2,7 @@
 // Created by frostzt on 8/2/2025.
 //
 
+#pragma once
 #ifndef DEFAULT_DESCRIPTOR_HPP
 #define DEFAULT_DESCRIPTOR_HPP
 
@@ -9,9 +10,12 @@
 #include "serializer.hpp"
 #include "types/uuid.hpp"
 
+#include <cassert>
+
 namespace core::datatypes {
     template<typename T>
     class DefaultDescriptor : public ITypeDescriptor, public ComparatorOnly<T> {
+    public:
         [[nodiscard]] std::string name() const override = 0;
 
         [[nodiscard]] bool equals(const FieldValue &x, const FieldValue &y) const override {
@@ -28,6 +32,11 @@ namespace core::datatypes {
 
         [[nodiscard]] FieldValue deserialize(const std::byte *data, size_t len) const override {
             return Serializer<T>::deserialize(data, len);
+        }
+
+        [[nodiscard]] std::string toString(const FieldValue &v) const override {
+            assert(std::holds_alternative<T>(v));
+            return Serializer<T>::toString(std::get<T>(v));
         }
     };
 
