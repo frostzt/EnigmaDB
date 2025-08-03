@@ -2,50 +2,21 @@
 // Created by aiden on 8/1/2025.
 //
 
+#pragma once
 #ifndef FIELD_HPP
 #define FIELD_HPP
 
 #include "type_registry.hpp"
+#include "field_value.hpp"
+#include "field_type.hpp"
 
 #include <cassert>
 #include <chrono>
 #include <vector>
 #include <string>
-#include <variant>
 
 namespace core::datatypes {
     class ITypeDescriptor;
-
-    /**
-     * @enum FieldType
-     * @brief Represents the type of a field in data structures.
-     *
-     * This enumeration defines the various data types that a field can represent.
-     * These types include primitive data types, binary data, and custom data types.
-     */
-    enum class FieldType : uint8_t {
-        Int32,
-        Int64,
-        Double,
-        String,
-        Bool,
-        UUID,
-        Binary,
-        Timestamp,
-        Null,
-        Custom
-    };
-
-    using FieldValue = std::variant<
-        std::monostate, // NULL
-        int32_t,
-        int64_t,
-        double,
-        std::string,
-        bool,
-        std::vector<uint8_t>, // binary data
-        std::chrono::system_clock::time_point
-    >;
 
     bool valueMatchesType(const FieldValue &val, FieldType type);
 
@@ -73,17 +44,20 @@ namespace core::datatypes {
          */
         std::shared_ptr<ITypeDescriptor> descriptor_;
 
-        Field(FieldValue v, FieldType t,
+        Field(FieldValue v, const FieldType t,
               std::shared_ptr<ITypeDescriptor> desc): value_(std::move(v)), type_(t), descriptor_(std::move(desc)) {
             assert(valueMatchesType(value_, type_));
         };
 
         [[nodiscard]] bool isNull() const;
 
-        [[nodiscard]] ITypeDescriptor* getDescriptor() const {
-            const ITypeDescriptor *desc = this->descriptor_ ? this->descriptor_.get() : TypeRegistry::get(this->type_);
-            return desc;
+        [[nodiscard]] const ITypeDescriptor *getDescriptor() const {
+            return this->descriptor_ ? this->descriptor_.get() : TypeRegistry::get(this->type_);
         }
+
+        [[nodiscard]] std::vector<std::byte> serialize() const;
+
+        static Field deserialize(const std::byte *data, size_t len);
 
         bool operator==(const Field &other) const {
             return getDescriptor()->equals(this->value_, other.value_);

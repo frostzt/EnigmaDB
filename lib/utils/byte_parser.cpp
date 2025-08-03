@@ -81,55 +81,31 @@ namespace Utility {
 		return str;
 	}
 
-	void ByteParser::writeVariant(std::vector<std::byte> &out, const core::Field &value) {
-		if (std::holds_alternative<int>(value)) {
-			out.push_back(static_cast<std::byte>(FieldTag::INT)); // int flag
-			const int v = std::get<int>(value);
-			for (int i = 0; i < 4; i++) {
-				out.push_back(static_cast<std::byte>((v >> (8 * i)) & 0xFF));
-			}
-		} else if (std::holds_alternative<std::string>(value)) {
-			out.push_back(static_cast<std::byte>(FieldTag::STRING)); // std::string flag
-			writeString(out, std::get<std::string>(value));
-		} else if (std::holds_alternative<double>(value)) {
-			out.push_back(static_cast<std::byte>(FieldTag::DOUBLE)); // double flag
-			const double v = std::get<double>(value);
-			uint8_t bytes[sizeof(double)];
-			std::memcpy(bytes, &v, sizeof(double));
-			out.insert(out.end(),
-			           reinterpret_cast<const std::byte *>(&v),
-			           reinterpret_cast<const std::byte *>(&v) + sizeof(double));
-		}
+	void ByteParser::writeVariant(std::vector<std::byte> &out, const FieldDataType &value) {
+		const auto serialized = value.serialize();
+		writeUint16(out, static_cast<uint16_t>(serialized.size()));
+		out.insert(out.end(), serialized.begin(), serialized.end());
 	}
 
-	std::optional<core::Field> ByteParser::readVariant() {
-		const int typeFlag = static_cast<int>(this->data_[this->cursor_]);
-		cursor_++;
+	std::optional<FieldDataType> ByteParser::readVariant() {
+		const uint16_t size = readUint16();
+		if (this->cursor_ + size > this->length_) return std::nullopt;
 
-		if (typeFlag == FieldTag::INT) {
-			return static_cast<int>(readUint32());
-		} else if (typeFlag == FieldTag::STRING) {
-			return readString();
-		} else if (typeFlag == FieldTag::DOUBLE) {
-			double d;
-			std::memcpy(&d, this->data_ + this->cursor_, sizeof(double));
-			this->cursor_ += sizeof(double);
-			return d;
-		} else {
-			return std::nullopt;
-		}
+		auto value = FieldDataType::deserialize(this->data_ + this->cursor_, size);
+		this->cursor_ += size;
+		return value;
 	}
 
-	void ByteParser::writeKey(std::vector<std::byte> &out, const core::Key& key) {
+	void ByteParser::writeKey(std::vector<std::byte> &out, const core::Key &key) {
 		writeUint16(out, key.parts_.size());
-		for (const auto &part : key.parts_) {
+		for (const auto &part: key.parts_) {
 			writeVariant(out, part);
 		}
 	}
 
 	core::Key ByteParser::readKey() {
 		const uint16_t size = readUint16();
-		std::vector<core::Field> parts;
+		std::vector<FieldDataType> parts;
 
 		for (int i = 0; i < size; ++i) {
 			auto val = readVariant();

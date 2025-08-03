@@ -9,6 +9,7 @@
 
 #include "lib/memtable/memtable.hpp"
 #include "tests/test_abs.hpp"
+#include "tests/test_utils.hpp"
 
 class TestMemTablePutGet final : public TestCase {
 public:
@@ -24,7 +25,7 @@ public:
         const std::string tableName = "customers";
         const memtable::MemTable table{tableName};
 
-        const auto primaryKey = core::Key{{std::string("8f1860aa-5d34-43b1-b70e-917fe5227642")}};
+        const auto primaryKey = core::Key{{makeField("8f1860aa-5d34-43b1-b70e-917fe5227642")}};
 
         const core::Entry preEntry{tableName, primaryKey, {}, false};
         table.put(preEntry);
@@ -53,16 +54,31 @@ class TestMemTablePutGetWithMultipleEntries final : public TestCase {
         const memtable::MemTable table{tableName};
 
         const std::vector data{
-            std::make_pair(core::Row{{"name", "Sourav"}, {"age", 25}, {"orders", 567}, {"balance", 567.974}},
-                           core::Key{{std::string("8f1860aa-5d34-43b1-b70e-917fe5227641")}}),
-            std::make_pair(core::Row{{"name", "Gourav"}, {"age", 23}, {"orders", 967}, {"balance", 2.532}},
-                           core::Key{{std::string("8f1860aa-5d34-43b1-b70e-917fe5227642")}}),
-            std::make_pair(core::Row{{"name", "Sudheer"}, {"age", 25}, {"orders", 2539}, {"balance", 592.329}},
-                           core::Key{{std::string("8f1860aa-5d34-43b1-b70e-917fe5227643")}}),
-            std::make_pair(core::Row{{"name", "Sachin"}, {"age", 28}, {"orders", 82}, {"balance", 57098.56}},
-                           core::Key{{std::string("8f1860aa-5d34-43b1-b70e-917fe5227644")}}),
-            std::make_pair(core::Row{{"name", "Amit"}, {"age", 29}, {"orders", 298}, {"balance", 529.52}},
-                           core::Key{{std::string("8f1860aa-5d34-43b1-b70e-917fe5227645")}})
+            std::make_pair(core::Row{
+                               {"name", makeField("Sourav")}, {"age", makeField(25)}, {"orders", makeField(567)},
+                               {"balance", makeField(567.974)}
+                           },
+                           core::Key{{makeField("8f1860aa-5d34-43b1-b70e-917fe5227641")}}),
+            std::make_pair(core::Row{
+                               {"name", makeField("Gourav")}, {"age", makeField(23)}, {"orders", makeField(967)},
+                               {"balance", makeField(2.532)}
+                           },
+                           core::Key{{makeField("8f1860aa-5d34-43b1-b70e-917fe5227642")}}),
+            std::make_pair(core::Row{
+                               {"name", makeField("Sudheer")}, {"age", makeField(25)}, {"orders", makeField(2539)},
+                               {"balance", makeField(592.329)}
+                           },
+                           core::Key{{makeField("8f1860aa-5d34-43b1-b70e-917fe5227643")}}),
+            std::make_pair(core::Row{
+                               {"name", makeField("Sachin")}, {"age", makeField(28)}, {"orders", makeField(82)},
+                               {"balance", makeField(57098.56)}
+                           },
+                           core::Key{{makeField("8f1860aa-5d34-43b1-b70e-917fe5227644")}}),
+            std::make_pair(core::Row{
+                               {"name", makeField("Amit")}, {"age", makeField(29)}, {"orders", makeField(298)},
+                               {"balance", makeField(529.52)}
+                           },
+                           core::Key{{makeField("8f1860aa-5d34-43b1-b70e-917fe5227645")}})
         };
 
         // Insert the vector data

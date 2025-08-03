@@ -9,9 +9,10 @@
 #include <variant>
 #include <unordered_map>
 
+#include "lib/datatypes/field.hpp"
+
 namespace core {
-    using Field = std::variant<int, double, std::string>;
-    using Row = std::unordered_map<std::string, Field>;
+    using Row = std::unordered_map<std::string, datatypes::Field>;
 } // namespace core
 
 #endif //CORE_CONSTANTS_HPP

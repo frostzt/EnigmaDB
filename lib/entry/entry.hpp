@@ -39,9 +39,27 @@ namespace core {
             if (e1.tableName != e2.tableName) return false;
             if (e1.primaryKey_ != e2.primaryKey_) return false;
             if (e1.isTombstone_ != e2.isTombstone_) return false;
-            if (e1.rowData_ != e2.rowData_) return false;
+
+            if (!compareRowData(e1.rowData_, e2.rowData_)) return false;
+
             if (compareTs) {
                 if (e1.timestamp_ != e2.timestamp_) return false;
+            }
+
+            return true;
+        }
+
+        static bool compareRowData(const Row &lhs, const Row &rhs) {
+            if (lhs.size() != rhs.size()) return false;
+
+            for (const auto &[k, v]: lhs) {
+                auto it = rhs.find(k);
+                if (it == rhs.end()) return false;
+
+                const auto &val2 = it->second;
+                if (v.value_.index() != val2.value_.index()) return false;
+
+                if (v.value_ != val2.value_) return false;
             }
 
             return true;
@@ -60,13 +78,14 @@ namespace core {
         friend std::ostream &operator<<(std::ostream &os, const Entry &e) {
             os << "[" << e.tableName << "] " << " {";
 
-            for (const auto &[k, v]: e.rowData_) {
-                os << k << ": ";
-                std::visit([&](auto &&arg) {
-                    os << arg;
-                }, v);
-                os << ", ";
-            }
+            // @TODO - Update out stream
+            // for (const auto &[k, v]: e.rowData_) {
+            //     os << k << ": ";
+            //     std::visit([&](auto &&arg) {
+            //         os << arg;
+            //     }, v);
+            //     os << ", ";
+            // }
 
             os << "} " << (e.isTombstone_ ? "[DELETED]" : "") << " @" << e.timestamp_;
             return os;

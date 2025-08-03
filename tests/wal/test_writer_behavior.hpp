@@ -10,6 +10,7 @@
 #include "lib/wal/wal_manager.hpp"
 #include "lib/utils/constants.hpp"
 #include "tests/test_abs.hpp"
+#include "tests/test_utils.hpp"
 
 class TestAppendForSingleWriter final : public TestCase {
 public:
@@ -28,7 +29,7 @@ public:
         const WAL::WALManager manager(1, 4_KB, path);
 
         // Create a new wal file by adding an entry
-        const core::Entry sourav("customer", core::Key{{std::string("cid")}}, {{"name", "sourav"}}, false);
+        const core::Entry sourav("customer", core::Key{{makeField("cid")}}, {{"name", makeField("sourav")}}, false);
         if (const auto appended = manager.append(sourav); !appended) return false;
 
         // Check if the new file was made
@@ -47,10 +48,10 @@ public:
         if (!core::Entry::compareEntries(initialEntries[0], sourav)) return false;
 
         // Add another entry
-        const core::Entry gourav("customer", core::Key{{std::string("cid")}}, {{"name", "gourav"}}, false);
+        const core::Entry gourav("customer", core::Key{{makeField("cid")}}, {{"name", makeField("gourav")}}, false);
         if (const auto appended = manager.append(gourav); !appended) return false;
 
-        // Check if the append, appended the entry
+        // Check if the append call appended the entry
         const auto finalEntries = manager.loadAll();
         if (finalEntries.size() != 2) return false;
         if (!core::Entry::compareEntries(finalEntries[0], sourav)) return false;
@@ -81,7 +82,7 @@ public:
         if (!writer.isStreamGood()) return false;
 
         // Write an entry to the buffer
-        const core::Entry sourav("customer", core::Key{{std::string("cid")}}, {{"name", "sourav"}}, false);
+        const core::Entry sourav("customer", core::Key{{makeField("cid")}}, {{"name", makeField("sourav")}}, false);
         writer.append(sourav, WAL::FlushMode::NO_FLUSH); // EXPLICITLY DENYING fsync
 
         // Validate if the file exists

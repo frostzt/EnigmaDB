@@ -2,6 +2,7 @@
 // Created by frostzt on 8/1/2025.
 //
 
+#pragma once
 #ifndef UUID_HPP
 #define UUID_HPP
 

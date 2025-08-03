@@ -2,12 +2,13 @@
 // Created by aiden on 8/1/2025.
 //
 
+#pragma once
 #ifndef TYPE_DESCRIPTOR_HPP
 #define TYPE_DESCRIPTOR_HPP
 
-#include <string>
+#include "field_value.hpp"
 
-#include "field.hpp"
+#include <string>
 
 namespace core::datatypes {
     class ITypeDescriptor {
@@ -23,6 +24,8 @@ namespace core::datatypes {
         [[nodiscard]] virtual std::vector<std::byte> serialize(const FieldValue &v) const = 0;
 
         [[nodiscard]] virtual FieldValue deserialize(const std::byte *data, size_t len) const = 0;
+
+        [[nodiscard]] virtual std::string toString(const FieldValue &v) const = 0;
     };
 } // namespace core::datatypes
 
