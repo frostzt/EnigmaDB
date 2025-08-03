@@ -67,9 +67,11 @@ add_executable(lsmtree
         lib/datatypes/types/uuid.hpp
         lib/datatypes/serializer.hpp
         lib/datatypes/default_descriptor.hpp
-        lib/datatypes/serializers/core_serializers.hpp
         lib/datatypes/type_registry.cpp
         lib/datatypes/type_registry.hpp
+        lib/datatypes/field_type.hpp
+        lib/datatypes/field_value.hpp
+        tests/test_utils.hpp
 )
 
 target_link_libraries(lsmtree PRIVATE spdlog::spdlog)
