@@ -10,6 +10,8 @@
 #include <filesystem>
 #include <thread>
 
+#include "tests/test_utils.hpp"
+
 int totalFilesInDir(const std::string &path) {
     auto dirItr = std::filesystem::directory_iterator(path);
 
@@ -37,7 +39,7 @@ bool TestWALConcurrentAppendsWithRotation::execute() const {
         threads.emplace_back([&manager, &threadResults, i]() {
             for (size_t j = 0; j < perThreadCount; ++j) {
                 const bool ok = manager.append(
-                    core::Entry("customer", core::Key{{std::string("cid_" + std::to_string(j))}}, {}, false));
+                    core::Entry("customer", core::Key{{makeField("cid_" + std::to_string(j))}}, {}, false));
                 threadResults[i].push_back(ok);
             }
         });

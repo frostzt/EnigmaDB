@@ -8,12 +8,13 @@
 #include "byte_parser.hpp"
 #include "lib/entry/entry.hpp"
 #include "lib/wal/wal_codec.hpp"
+#include "tests/test_utils.hpp"
 
 bool TestFullRoundTripWAL::execute() const {
-    const core::Entry entry("customers", core::Key{{std::string("cid")}}, {
-                          {"name", std::string("Sourav")},
-                          {"age", 25},
-                          {"balance", 999.999},
+    const core::Entry entry("customers", core::Key{{makeField("cid")}}, {
+                          {"name", makeField("Sourav")},
+                          {"age", makeField(52)},
+                          {"balance", makeField(999.999)},
                       }, false);
 
     const auto serializedEntry = entry.serialize();
@@ -39,10 +40,7 @@ bool TestFullRoundTripWAL::execute() const {
         return false;
     }
 
-    if (dEntry.rowData_ != entry.rowData_) {
-        std::cerr << "Row data mismatch!" << std::endl;
-        return false;
-    }
+    core::Entry::compareRowData(dEntry.rowData_, entry.rowData_);
 
     if (dEntry.isTombstone_ != entry.isTombstone_) {
         std::cerr << "Tombstone mismatch!" << std::endl;
@@ -58,10 +56,10 @@ bool TestFullRoundTripWAL::execute() const {
 }
 
 bool TestChecksumCorruption::execute() const {
-    const core::Entry entry("customers", core::Key{{std::string("cid")}}, {
-                          {"name", std::string("Sourav")},
-                          {"age", 25},
-                          {"balance", 999.999},
+    const core::Entry entry("customers", core::Key{{makeField("cid")}}, {
+                          {"name", makeField("Sourav")},
+                          {"age", makeField(25)},
+                          {"balance", makeField(999.999)},
                       }, false);
 
     auto serializedEntry = entry.serialize();

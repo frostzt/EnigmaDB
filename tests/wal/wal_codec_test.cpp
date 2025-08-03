@@ -8,12 +8,13 @@
 #include <filesystem>
 
 #include "lib/entry/entry.hpp"
+#include "tests/test_utils.hpp"
 
 bool TestFullWALCodecTrip::execute() const {
-    const core::Entry entry("customers", core::Key{{std::string("cid")}}, {
-                          {"name", std::string("Sourav")},
-                          {"age", 25},
-                          {"balance", 999.999},
+    const core::Entry entry("customers", core::Key{{makeField("cid")}}, {
+                          {"name", makeField("Sourav")},
+                          {"age", makeField(25)},
+                          {"balance", makeField(999.999)},
                       }, false);
 
     std::string fileName = "00001_test.wal";
@@ -78,22 +79,22 @@ bool TestFullWALCodecTrip::execute() const {
 }
 
 bool TestWALMultipleEntries::execute() const {
-    const core::Entry sourav("customers", core::Key{{std::string("cid")}}, {
-                          {"name", std::string("Sourav")},
-                          {"age", 25},
-                          {"balance", 1000},
+    const core::Entry sourav("customers", core::Key{{makeField("cid")}}, {
+                          {"name", makeField("Sourav")},
+                          {"age", makeField(25)},
+                          {"balance", makeField(1000)},
                       }, false);
 
-    const core::Entry sudheer("customers", core::Key{{std::string("cid")}}, {
-                          {"name", std::string("Sudheer")},
-                          {"age", 25},
-                          {"balance", 2000},
+    const core::Entry sudheer("customers", core::Key{{makeField("cid")}}, {
+                          {"name", makeField("Sudheer")},
+                          {"age", makeField(25)},
+                          {"balance", makeField(2000)},
                       }, false);
 
-    const core::Entry sachin("customers", core::Key{{std::string("cid")}}, {
-                          {"name", std::string("Sachin")},
-                          {"age", 27},
-                          {"balance", 5000.500},
+    const core::Entry sachin("customers", core::Key{{makeField("cid")}}, {
+                          {"name", makeField("Sachin")},
+                          {"age", makeField(27)},
+                          {"balance", makeField(5000.500)},
                       }, false);
 
     std::string fileName = "00001_test.wal";
