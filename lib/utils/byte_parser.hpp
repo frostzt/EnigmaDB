@@ -16,13 +16,8 @@
 #include "lib/entry/core_constants.hpp"
 #include "lib/entry/key.hpp"
 
-
 namespace Utility {
-    enum FieldTag : std::underlying_type_t<std::byte> {
-        INT = 0x00,
-        STRING = 0x01,
-        DOUBLE = 0x02,
-    };
+    using FieldDataType = core::datatypes::Field;
 
     static constexpr std::string_view magic = "ENTRY";
 
@@ -85,9 +80,9 @@ namespace Utility {
 
         [[nodiscard]] std::string readString();
 
-        static void writeVariant(std::vector<std::byte> &out, const core::Field &value);
+        static void writeVariant(std::vector<std::byte> &out, const FieldDataType &value);
 
-        [[nodiscard]] std::optional<core::Field> readVariant();
+        [[nodiscard]] std::optional<FieldDataType> readVariant();
 
         static void writeKey(std::vector<std::byte> &out, const core::Key &key);
 
