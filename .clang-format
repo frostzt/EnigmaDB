@@ -1,0 +1,47 @@
+# EnigmaDB .clang-format config
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 120
+
+# Formatting and spacing
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: false
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+
+AllowShortFunctionsOnASingleLine: Inline
+AlwaysBreakAfterReturnType: None
+AlwaysBreakTemplateDeclarations: Yes
+SpacesBeforeTrailingComments: 1
+SpaceBeforeParens: ControlStatements
+
+# Namespaces and includes
+NamespaceIndentation: All
+IndentNamespaceContents: true
+IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex:           '^<.*\.h>'
+    Priority:        1
+    SortPriority:    0
+    CaseSensitive:   false
+  - Regex:           '^".*"$'
+    Priority:        2
+    SortPriority:    1
+    CaseSensitive:   false
+SortIncludes: true
+
+# Enums and constructors
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 4
+
+# Comments
+CommentPragmas: '^ IWYU pragma:'
