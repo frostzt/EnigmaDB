@@ -9,6 +9,7 @@
 
 #include "test_abs.hpp"
 #include "timestamp_generator_test.hpp"
+#include "datatypes/types/test_uuid_type.hpp"
 #include "memtable/test_memtable_put_get.hpp"
 #include "utils/byte_parser.hpp"
 #include "utils/byte_utils.hpp"
@@ -17,30 +18,35 @@
 #include "wal/wal_manager_test.hpp"
 
 int main() {
-    std::vector<std::unique_ptr<TestCase> > tests;
+    std::vector<std::unique_ptr<TESTS::TestCase> > tests;
 
     // Timestamp generator
-    tests.emplace_back(std::make_unique<TimestampMonotonicTest>());
-    tests.emplace_back(std::make_unique<TimestampConcurrencyTest>());
+    tests.emplace_back(std::make_unique<TESTS::TIMESTAMP::TimestampMonotonicTest>());
+    tests.emplace_back(std::make_unique<TESTS::TIMESTAMP::TimestampConcurrencyTest>());
 
     // Byte parser
-    tests.emplace_back(std::make_unique<TestConvertingToByes>());
-    tests.emplace_back(std::make_unique<TestFullRoundTripWAL>());
-    tests.emplace_back(std::make_unique<TestChecksumCorruption>());
+    tests.emplace_back(std::make_unique<TESTS::UTILS::TestConvertingToByes>());
+    tests.emplace_back(std::make_unique<TESTS::UTILS::TestFullRoundTripWAL>());
+    tests.emplace_back(std::make_unique<TESTS::UTILS::TestChecksumCorruption>());
 
     // WAL
-    tests.emplace_back(std::make_unique<TestFullWALCodecTrip>());
-    tests.emplace_back(std::make_unique<TestWALMultipleEntries>());
-    tests.emplace_back(std::make_unique<TestAppendForSingleWriter>());
-    tests.emplace_back(std::make_unique<TestWriterFlushToDisk>());
-    tests.emplace_back(std::make_unique<TestWALConcurrentAppendsWithRotation>());
+    tests.emplace_back(std::make_unique<TESTS::WAL::TestFullWALCodecTrip>());
+    tests.emplace_back(std::make_unique<TESTS::WAL::TestWALMultipleEntries>());
+    tests.emplace_back(std::make_unique<TESTS::WAL::TestAppendForSingleWriter>());
+    tests.emplace_back(std::make_unique<TESTS::WAL::TestWriterFlushToDisk>());
+    tests.emplace_back(std::make_unique<TESTS::WAL::TestWALConcurrentAppendsWithRotation>());
 
     // MemTable
-    tests.emplace_back(std::make_unique<TestMemTablePutGet>());
-    tests.emplace_back(std::make_unique<TestMemTablePutGetWithMultipleEntries>());
+    tests.emplace_back(std::make_unique<TESTS::MEMTABLE::TestMemTablePutGet>());
+    tests.emplace_back(std::make_unique<TESTS::MEMTABLE::TestMemTablePutGetWithMultipleEntries>());
 
-    std::unordered_map<std::string, std::vector<TestCase *> > grouped;
-    std::vector<std::unique_ptr<TestCase> > testInstances;
+    // DataTypes
+    tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestUUIDComparison>());
+    tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestUUIDCreationFromString>());
+    tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestUUIDCreationFromByteArray>());
+
+    std::unordered_map<std::string, std::vector<TESTS::TestCase *> > grouped;
+    std::vector<std::unique_ptr<TESTS::TestCase> > testInstances;
 
     for (auto &test: tests) {
         grouped[test->suiteName()].push_back(test.get());

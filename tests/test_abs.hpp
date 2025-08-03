@@ -8,18 +8,23 @@
 #include <iostream>
 #include <string>
 
-inline bool failTest(const std::string& msg) {
-    std::cout << msg << std::endl;
-    return false;
-}
+namespace TESTS {
+    inline bool failTest(const std::string &msg) {
+        std::cout << msg << std::endl;
+        return false;
+    }
 
-class TestCase {
-public:
-    virtual ~TestCase() = default;
+    class TestCase {
+    public:
+        virtual ~TestCase() = default;
 
-    [[nodiscard]] virtual std::string suiteName() const = 0;
-    [[nodiscard]] virtual std::string name() const = 0;
-    [[nodiscard]] virtual bool execute() const = 0;
-};
+        [[nodiscard]] virtual std::string suiteName() const = 0;
+
+        [[nodiscard]] virtual std::string name() const = 0;
+
+        [[nodiscard]] virtual bool execute() const = 0;
+    };
+} // namespace TESTS
+
 
 #endif //TEST_ABS_HPP

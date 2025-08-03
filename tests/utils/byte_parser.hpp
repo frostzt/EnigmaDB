@@ -7,31 +7,32 @@
 
 #include "tests/test_abs.hpp"
 
-class TestFullRoundTripWAL final : public TestCase {
-public:
-    [[nodiscard]] std::string suiteName() const override {
-        return "[BYTE_PARSER]";
+namespace TESTS::UTILS {
+    class TestFullRoundTripWAL final : public TestCase {
+    public:
+        [[nodiscard]] std::string suiteName() const override {
+            return "[BYTE_PARSER]";
+        };
+
+        [[nodiscard]] std::string name() const override {
+            return "should return correct fields after encoding and decoding";
+        }
+
+        [[nodiscard]] bool execute() const override;
     };
 
-    [[nodiscard]] std::string name() const override {
-        return "should return correct fields after encoding and decoding";
-    }
+    class TestChecksumCorruption final : public TestCase {
+    public:
+        [[nodiscard]] std::string suiteName() const override {
+            return "[BYTE_PARSER]";
+        };
 
-    [[nodiscard]] bool execute() const override;
-};
+        [[nodiscard]] std::string name() const override {
+            return "should return nullopt if the checksum is invalid";
+        }
 
-class TestChecksumCorruption final : public TestCase {
-public:
-    [[nodiscard]] std::string suiteName() const override {
-        return "[BYTE_PARSER]";
+        [[nodiscard]] bool execute() const override;
     };
-
-    [[nodiscard]] std::string name() const override {
-        return "should return nullopt if the checksum is invalid";
-    }
-
-    [[nodiscard]] bool execute() const override;
-};
-
+} // namespace TESTS::UTILS
 
 #endif //BYTE_PARSER_HPP

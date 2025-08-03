@@ -7,30 +7,31 @@
 
 #include "tests/test_abs.hpp"
 
-class TestFullWALCodecTrip final : public TestCase {
-public:
-    [[nodiscard]] std::string suiteName() const override {
-        return "[WAL]";
+namespace TESTS::WAL {
+    class TestFullWALCodecTrip final : public TestCase {
+    public:
+        [[nodiscard]] std::string suiteName() const override {
+            return "[WAL]";
+        };
+
+        [[nodiscard]] std::string name() const override {
+            return "should encode and decode a full wal file";
+        }
+
+        [[nodiscard]] bool execute() const override;
     };
 
-    [[nodiscard]] std::string name() const override {
-        return "should encode and decode a full wal file";
-    }
+    class TestWALMultipleEntries final : public TestCase {
+        [[nodiscard]] std::string suiteName() const override {
+            return "[WAL]";
+        };
 
-    [[nodiscard]] bool execute() const override;
-};
+        [[nodiscard]] std::string name() const override {
+            return "should encode and decode a full wal file";
+        }
 
-class TestWALMultipleEntries final : public TestCase {
-    [[nodiscard]] std::string suiteName() const override {
-        return "[WAL]";
+        [[nodiscard]] bool execute() const override;
     };
-
-    [[nodiscard]] std::string name() const override {
-        return "should encode and decode a full wal file";
-    }
-
-    [[nodiscard]] bool execute() const override;
-};
-
+} // namespace TESTS::WAL
 
 #endif //WAL_CODEC_TEST_HPP

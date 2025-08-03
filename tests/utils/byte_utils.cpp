@@ -6,9 +6,11 @@
 #include "lib/entry/entry.hpp"
 #include "tests/test_utils.hpp"
 
-bool TestConvertingToByes::execute() const {
-    const core::Entry entry("customer", core::Key{{makeField("cid")}}, {}, false);
-    auto serialized = entry.serialize();
-    auto de = entry.toHex();
-    return true;
-}
+namespace TESTS::UTILS {
+    bool TestConvertingToByes::execute() const {
+        const core::Entry entry("customer", core::Key{{makeField("cid")}}, {}, false);
+        auto serialized = entry.serialize();
+        auto de = entry.toHex();
+        return true;
+    }
+} // namespace TESTS::UTILS
