@@ -14,7 +14,7 @@ namespace TESTS::DATATYPES {
 
     class TestUUIDCreationFromString final : public TestCase {
         [[nodiscard]] std::string suiteName() const override {
-            return "[UUID]";
+            return "[DATATYPES]";
         }
 
         [[nodiscard]] std::string name() const override {

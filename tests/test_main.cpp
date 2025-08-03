@@ -9,6 +9,7 @@
 
 #include "test_abs.hpp"
 #include "timestamp_generator_test.hpp"
+#include "datatypes/test_field_serialization.hpp"
 #include "datatypes/types/test_uuid_type.hpp"
 #include "memtable/test_memtable_put_get.hpp"
 #include "utils/byte_parser.hpp"
@@ -44,6 +45,11 @@ int main() {
     tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestUUIDComparison>());
     tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestUUIDCreationFromString>());
     tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestUUIDCreationFromByteArray>());
+    tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestUINTSerialization>());
+    tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestStringSerialization>());
+    tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestUUIDSerialization>());
+    tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestBinaryArraySerialization>());
+    tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestTimestampSerialization>());
 
     std::unordered_map<std::string, std::vector<TESTS::TestCase *> > grouped;
     std::vector<std::unique_ptr<TESTS::TestCase> > testInstances;

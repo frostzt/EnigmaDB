@@ -73,6 +73,7 @@ add_executable(lsmtree
         lib/datatypes/field_value.hpp
         tests/test_utils.hpp
         tests/datatypes/types/test_uuid_type.hpp
+        tests/datatypes/test_field_serialization.hpp
 )
 
 target_link_libraries(lsmtree PRIVATE spdlog::spdlog)

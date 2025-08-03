@@ -24,6 +24,18 @@ namespace TESTS {
     inline core::datatypes::Field makeField(double v) {
         return core::datatypes::Field{v, core::datatypes::FieldType::Double, nullptr};
     }
+
+    inline core::datatypes::Field makeField(core::datatypes::UUID v) {
+        return core::datatypes::Field{v, core::datatypes::FieldType::UUID, nullptr};
+    }
+
+    inline core::datatypes::Field makeField(std::vector<uint8_t> v) {
+        return core::datatypes::Field{v, core::datatypes::FieldType::Binary, nullptr};
+    }
+
+    inline core::datatypes::Field makeField(std::chrono::system_clock::time_point v) {
+        return core::datatypes::Field{v, core::datatypes::FieldType::Timestamp, nullptr};
+    }
 } // namespace TESTS
 
 #endif //TEST_UTILS_HPP
