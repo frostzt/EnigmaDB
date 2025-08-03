@@ -9,49 +9,50 @@
 #include <vector>
 #include <unordered_set>
 
-bool TimestampMonotonicTest::execute() const {
-    TimestampGenerator tsGen;
+namespace TESTS::TIMESTAMP {
+    bool TimestampMonotonicTest::execute() const {
+        TimestampGenerator tsGen;
 
-    uint64_t last = 0;
-    for (size_t i = 0; i < 1000; i++) {
-        const auto ts = tsGen.next();
-        if (last > ts) return false;
+        uint64_t last = 0;
+        for (size_t i = 0; i < 1000; i++) {
+            const auto ts = tsGen.next();
+            if (last > ts) return false;
 
-        last = ts;
-    }
-
-    return true;
-}
-
-bool TimestampConcurrencyTest::execute() const {
-    TimestampGenerator tsGen;
-
-    constexpr int threadCount = 10;
-    constexpr int perThreadTsCount = 1000;
-
-    std::vector<std::thread> threads;
-    std::vector<std::vector<uint64_t> > threadResults(threadCount);
-
-    threads.reserve(threadCount);
-
-    for (size_t i = 0; i < threadCount; ++i) {
-        threads.emplace_back([&tsGen, &threadResults, i]() {
-            for (size_t j = 0; j < perThreadTsCount; ++j) {
-                uint64_t ts = tsGen.next();
-                threadResults[i].push_back(ts);
-            }
-        });
-    }
-
-    for (auto &t: threads) t.join();
-
-    std::unordered_set<uint64_t> allTimestamps;
-    for (const auto &vec: threadResults) {
-        for (uint64_t ts: vec) {
-            if (!allTimestamps.insert(ts).second) return false; // duplicate found
+            last = ts;
         }
+
+        return true;
     }
 
-    return allTimestamps.size() == threadCount * perThreadTsCount;
-}
+    bool TimestampConcurrencyTest::execute() const {
+        TimestampGenerator tsGen;
 
+        constexpr int threadCount = 10;
+        constexpr int perThreadTsCount = 1000;
+
+        std::vector<std::thread> threads;
+        std::vector<std::vector<uint64_t> > threadResults(threadCount);
+
+        threads.reserve(threadCount);
+
+        for (size_t i = 0; i < threadCount; ++i) {
+            threads.emplace_back([&tsGen, &threadResults, i]() {
+                for (size_t j = 0; j < perThreadTsCount; ++j) {
+                    uint64_t ts = tsGen.next();
+                    threadResults[i].push_back(ts);
+                }
+            });
+        }
+
+        for (auto &t: threads) t.join();
+
+        std::unordered_set<uint64_t> allTimestamps;
+        for (const auto &vec: threadResults) {
+            for (uint64_t ts: vec) {
+                if (!allTimestamps.insert(ts).second) return false; // duplicate found
+            }
+        }
+
+        return allTimestamps.size() == threadCount * perThreadTsCount;
+    }
+} // namespace TESTS::TIMESTAMP
