@@ -74,6 +74,16 @@ add_executable(lsmtree
         tests/test_utils.hpp
         tests/datatypes/types/test_uuid_type.hpp
         tests/datatypes/test_field_serialization.hpp
+        lib/memtable/memtable_manager.cpp
+        lib/memtable/memtable_manager.hpp
+        lib/sstable/compressor.cpp
+        lib/sstable/compressor.hpp
+        lib/sstable/key_encoder.cpp
+        lib/sstable/key_encoder.hpp
+        lib/sstable/block_encoder.cpp
+        lib/sstable/block_encoder.hpp
+        lib/sstable/filter_policy.cpp
+        lib/sstable/filter_policy.hpp
 )
 
 target_link_libraries(lsmtree PRIVATE spdlog::spdlog)

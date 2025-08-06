@@ -21,6 +21,19 @@ namespace memtable {
      * fast in-memory manipulations and can be "frozen" to prevent further modifications.
      */
     class MemTable {
+    private:
+        /** The name of the table this MemTable maintains */
+        std::string tableName_;
+
+        /** Core AVL Tree for this MemTable */
+        std::unique_ptr<AVLTree<core::Entry> > tree_;
+
+        /** Read/Write mutex for this MemTable */
+        mutable std::shared_mutex rwMutex_;
+
+        /** Represents if this MemTable is frozen or not */
+        std::atomic<bool> frozen_;
+
     public:
         using KeyType = std::string;
 
@@ -129,12 +142,6 @@ namespace memtable {
          * @return The current number of entries in the MemTable.
          */
         size_t size() const;
-
-    private:
-        std::string tableName_;
-        std::unique_ptr<AVLTree<core::Entry> > tree_;
-        mutable std::shared_mutex rwMutex_;
-        std::atomic<bool> frozen_;
     };
 } // namespace memtable
 
