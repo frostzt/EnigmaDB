@@ -1,5 +1,5 @@
 //
-// Created by aiden on 7/16/2025.
+// Created by frostzt on 7/16/2025.
 //
 
 #include <iostream>
@@ -9,6 +9,8 @@
 
 #include "test_abs.hpp"
 #include "timestamp_generator_test.hpp"
+#include "compression/test_lz4_compression.h"
+#include "compression/test_noop_compression.h"
 #include "datatypes/test_field_serialization.hpp"
 #include "datatypes/types/test_uuid_type.hpp"
 #include "memtable/test_memtable_put_get.hpp"
@@ -50,6 +52,15 @@ int main() {
     tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestUUIDSerialization>());
     tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestBinaryArraySerialization>());
     tests.emplace_back(std::make_unique<TESTS::DATATYPES::TestTimestampSerialization>());
+
+    // Compression
+    tests.emplace_back(std::make_unique<TESTS::TestLZ4CompressorFullTrip>());
+    tests.emplace_back(std::make_unique<TESTS::TestLZ4CompressorEmptyInput>());
+    tests.emplace_back(std::make_unique<TESTS::TestLZ4CompressorWithHighlyCompressibleInput>());
+    tests.emplace_back(std::make_unique<TESTS::TestNoopCompressorFullTrip>());
+    tests.emplace_back(std::make_unique<TESTS::TestNoopCompressorEmptyInput>());
+    tests.emplace_back(std::make_unique<TESTS::TestNoopCompressorWithHighlyCompressibleInput>());
+
 
     std::unordered_map<std::string, std::vector<TESTS::TestCase *> > grouped;
     std::vector<std::unique_ptr<TESTS::TestCase> > testInstances;
