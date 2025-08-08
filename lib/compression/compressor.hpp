@@ -9,7 +9,12 @@
 #include <string_view>
 #include <vector>
 
-namespace sstable {
+namespace compression {
+    enum class CompressorID : uint8_t {
+        Noop = 0,
+        LZ4 = 1,
+    };
+
     class Compressor {
     public:
         virtual ~Compressor() = default;
@@ -20,8 +25,8 @@ namespace sstable {
 
         [[nodiscard]] virtual std::string_view name() const = 0;
 
-        [[nodiscard]] virtual uint8_t id() const = 0;
+        [[nodiscard]] virtual CompressorID id() const = 0;
     };
-} // namespace sstable
+} // namespace compression
 
 #endif //COMPRESSOR_HPP

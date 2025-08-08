@@ -22,6 +22,8 @@ else()
     add_compile_options(-mavx2 -msse4.2)
 endif()
 
+add_subdirectory(external/lz4/build/cmake lz4-build)
+
 add_executable(lsmtree
         lib/abstract/avl.hpp
         lib/entry/entry.hpp
@@ -76,14 +78,20 @@ add_executable(lsmtree
         tests/datatypes/test_field_serialization.hpp
         lib/memtable/memtable_manager.cpp
         lib/memtable/memtable_manager.hpp
-        lib/sstable/compressor.cpp
-        lib/sstable/compressor.hpp
+        lib/compression/compressor.hpp
         lib/sstable/key_encoder.cpp
         lib/sstable/key_encoder.hpp
         lib/sstable/block_encoder.cpp
         lib/sstable/block_encoder.hpp
         lib/sstable/filter_policy.cpp
         lib/sstable/filter_policy.hpp
+        lib/compression/lz_4_compressor.cpp
+        lib/compression/lz_4_compressor.hpp
+        lib/compression/noop_compressor.hpp
+        tests/compression/test_lz4_compression.h
+        tests/compression/test_noop_compression.h
 )
 
 target_link_libraries(lsmtree PRIVATE spdlog::spdlog)
+target_link_libraries(lsmtree PRIVATE lz4)
+
