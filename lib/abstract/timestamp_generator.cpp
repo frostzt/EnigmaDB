@@ -3,9 +3,8 @@
 //
 
 
-#include "timestamp_generator.hpp"
-
 #include <chrono>
+#include "timestamp_generator.hpp"
 
 uint64_t TimestampGenerator::next() {
     // Generate milliseconds from the current epoch with the system clock
