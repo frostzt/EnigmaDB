@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31.6)
-project(lsmtree)
+project(enigma_db)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -7,14 +7,12 @@ include_directories(.)
 
 include(FetchContent)
 
-# External content
-FetchContent_Declare(
-        spdlog
-        GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG v1.15.3
-)
+# deps
+FetchContent_Declare(spdlog GIT_REPOSITORY https://github.com/gabime/spdlog.git GIT_TAG v1.15.3)
+FetchContent_Declare(Catch2 GIT_REPOSITORY https://github.com/catchorg/Catch2.git GIT_TAG v3.8.1)
+FetchContent_MakeAvailable(spdlog Catch2)
 
-FetchContent_MakeAvailable(spdlog)
+add_subdirectory(external/lz4/build/cmake lz4-build)
 
 if(MSVC)
     add_compile_options(/arch:AVX2)
@@ -22,9 +20,8 @@ else()
     add_compile_options(-mavx2 -msse4.2)
 endif()
 
-add_subdirectory(external/lz4/build/cmake lz4-build)
-
-add_executable(lsmtree
+# libs
+add_library(enigma_core
         lib/abstract/avl.hpp
         lib/entry/entry.hpp
         lib/entry/entry.cpp
@@ -32,36 +29,22 @@ add_executable(lsmtree
         lib/memtable/memtable.hpp
         lib/abstract/timestamp_generator.cpp
         lib/abstract/timestamp_generator.hpp
-        tests/test_abs.hpp
-        tests/test_main.cpp
-        tests/timestamp_generator_test.hpp
-        tests/timestamp_generator_test.cpp
         lib/utils/crypto_utils.cpp
         lib/utils/crypto_utils.hpp
-        tests/utils/byte_utils.cpp
-        tests/utils/byte_utils.hpp
         lib/utils/byte_parser.cpp
         lib/utils/byte_parser.hpp
-        tests/utils/byte_parser.cpp
-        tests/utils/byte_parser.hpp
         lib/utils/logger.hpp
         lib/wal/wal.cpp
         lib/wal/wal.hpp
         lib/wal/wal_codec.hpp
-        tests/wal/wal_codec_test.cpp
-        tests/wal/wal_codec_test.hpp
         lib/wal/wal_manager.cpp
         lib/wal/wal_manager.hpp
-        tests/wal/wal_manager_test.cpp
-        tests/wal/wal_manager_test.hpp
         lib/utils/constants.hpp
         lib/wal/wal_writer.cpp
         lib/wal/wal_writer.hpp
-        tests/wal/test_writer_behavior.hpp
         lib/entry/key.cpp
         lib/entry/key.hpp
         lib/entry/core_constants.hpp
-        tests/memtable/test_memtable_put_get.hpp
         lib/datatypes/field.hpp
         lib/datatypes/field.cpp
         lib/datatypes/type_descriptor.hpp
@@ -73,9 +56,6 @@ add_executable(lsmtree
         lib/datatypes/type_registry.hpp
         lib/datatypes/field_type.hpp
         lib/datatypes/field_value.hpp
-        tests/test_utils.hpp
-        tests/datatypes/types/test_uuid_type.hpp
-        tests/datatypes/test_field_serialization.hpp
         lib/memtable/memtable_manager.cpp
         lib/memtable/memtable_manager.hpp
         lib/compression/compressor.hpp
@@ -88,10 +68,46 @@ add_executable(lsmtree
         lib/compression/lz_4_compressor.cpp
         lib/compression/lz_4_compressor.hpp
         lib/compression/noop_compressor.hpp
-        tests/compression/test_lz4_compression.h
-        tests/compression/test_noop_compression.h
+        lib/utils/vint/vint.hpp
 )
 
-target_link_libraries(lsmtree PRIVATE spdlog::spdlog)
-target_link_libraries(lsmtree PRIVATE lz4)
+target_include_directories(enigma_core PUBLIC .)
+target_link_libraries(enigma_core PUBLIC spdlog::spdlog lz4)
 
+# Executables
+## Core DB
+option(ENIGMA_BUILD_APP "Build the enigma binary" OFF)
+if(ENIGMA_BUILD_APP)
+    add_executable(enigma_db
+            lib/main.cpp
+    )
+    target_link_libraries(enigma_db PRIVATE enigma_core)
+endif()
+
+## Tests
+add_executable(tests
+        # Timestamps
+        tests/timestamp_generator_test.cpp
+
+        # Datatypes
+        tests/datatypes/test_field_serialization.cpp
+        tests/datatypes/types/test_uuid_type.cpp
+
+        # Compression
+        tests/compression/test_noop_compression.cpp
+        tests/compression/test_lz4_compression.cpp
+
+        # WAL
+        tests/wal/test_writer_behavior.cpp
+        tests/wal/test_wal_codec_encode_decode.cpp
+        tests/wal/test_wal_manager.cpp
+
+        # MemTable
+        tests/memtable/test_memtable_put_get.cpp
+
+        # Utils
+        tests/utils/vint/test_varint_encode.cpp
+        tests/utils/test_byte_parser.cpp
+        tests/utils/test_byte_utils_entry.cpp
+)
+target_link_libraries(tests PRIVATE enigma_core Catch2::Catch2WithMain)
