@@ -2,7 +2,7 @@
 
 ### 🔧 Phase 1: Core Components
 
-- [ ] LZ4Compressor and NoopCompressor
+- [x] LZ4Compressor and NoopCompressor
 - [ ] PrefixKeyEncoder and RawKeyEncoder
 - [ ] BasicBlockEncoder (uses KeyEncoder + Compressor)
 - [ ] BloomFilterPolicy (with test Bloom impl)
@@ -51,6 +51,7 @@
 +-----------------------------+
 | Footer (fixed size)        |
 +-----------------------------+
+
 [Block Structure]
 +-----------------------------+
 | BlockHeader |

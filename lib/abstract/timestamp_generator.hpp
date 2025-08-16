@@ -6,7 +6,6 @@
 #define TIMESTAMP_GENERATOR_HPP
 
 #include <atomic>
-#include <cstdint>
 
 class TimestampGenerator {
 private:
