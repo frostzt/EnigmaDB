@@ -2,8 +2,8 @@
 // Created by frostzt on 8/14/2025.
 //
 
-#ifndef LSMTREE_VINT_H
-#define LSMTREE_VINT_H
+#ifndef ENIGMA_VINT_H
+#define ENIGMA_VINT_H
 
 #include <cstdint>
 #include <vector>
@@ -94,6 +94,7 @@ namespace utility {
                 status = StatusCode::TRUNCATED;
                 return nullptr;
             }
+
             const uint8_t byte = *data++;
             result |= static_cast<uint32_t>(byte & 0x7Fu) << shift;
             if ((byte & 0x80u) == 0) {
@@ -141,13 +142,20 @@ namespace utility {
                 status = StatusCode::TRUNCATED;
                 return nullptr;
             }
+
             const auto byte = *data++;
-            result |= static_cast<uint64_t>(byte & 0x7F) << shift;
             if ((byte & 0x80u) == 0) {
+                if (i == 9 && (byte & 0x7Eu)) {
+                    status = StatusCode::MALFORMED;
+                    return nullptr;
+                }
+
+                result |= static_cast<uint64_t>(byte & 0x7F) << shift;
                 out = result;
                 return data;
             }
 
+            result |= static_cast<uint64_t>(byte & 0x7F) << shift;
             shift += 7;
         }
 
@@ -156,4 +164,4 @@ namespace utility {
     }
 } // namespace utility
 
-#endif //LSMTREE_VINT_H
+#endif //ENIGMA_VINT_H
