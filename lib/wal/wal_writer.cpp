@@ -1,9 +1,13 @@
 //
-// Created by aiden on 7/28/2025.
+// Created by frostzt on 7/28/2025.
 //
 
 #include <iomanip>
 #include <sys/stat.h>
+
+#ifdef HAS_LIBURING
+#include <liburing.h>
+#endif
 
 #include "wal_writer.hpp"
 #include "wal_codec.hpp"

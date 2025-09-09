@@ -10,10 +10,25 @@ include(FetchContent)
 # deps
 FetchContent_Declare(spdlog GIT_REPOSITORY https://github.com/gabime/spdlog.git GIT_TAG v1.15.3)
 FetchContent_Declare(Catch2 GIT_REPOSITORY https://github.com/catchorg/Catch2.git GIT_TAG v3.8.1)
-FetchContent_Declare(liburing GIT_REPOSITORY https://github.com/axboe/liburing)
-FetchContent_MakeAvailable(spdlog Catch2 liburing)
+FetchContent_MakeAvailable(spdlog Catch2)
 
 add_subdirectory(external/lz4/build/cmake lz4-build)
+
+# External Deps
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(LIBURING liburing)
+
+    if (NOT LIBURING_FOUND)
+        message(WARNING "liburing not found. Install with: sudo apt install liburing-dev")
+        set(USE_LIBURING OFF)
+    else ()
+        set(USE_LIBURING ON)
+    endif ()
+else()
+    message(STATUS "liburing not available on ${CMAKE_SYSTEM_NAME}")
+    set(USE_LIBURING OFF)
+endif ()
 
 if(MSVC)
     add_compile_options(/arch:AVX2)
@@ -73,7 +88,14 @@ add_library(enigma_core
 )
 
 target_include_directories(enigma_core PUBLIC .)
-target_link_libraries(enigma_core PUBLIC spdlog::spdlog lz4)
+
+if(USE_LIBURING)
+    target_link_libraries(enigma_core PUBLIC spdlog::spdlog lz4 ${LIBURING_LIBRARIES})
+    target_include_directories(enigma_core PUBLIC ${LIBURING_INCLUDE_DIRS})
+    target_compile_definitions(enigma_core PUBLIC HAS_LIBURING)
+else()
+    target_link_libraries(enigma_core PUBLIC spdlog::spdlog lz4)
+endif()
 
 # Executables
 ## Core DB
@@ -110,7 +132,6 @@ add_executable(tests
         tests/utils/vint/test_varint_encode.cpp
         tests/utils/test_byte_parser.cpp
         tests/utils/test_byte_utils_entry.cpp
-        tests/sandbox.cpp
 )
 
 target_link_libraries(tests PRIVATE enigma_core Catch2::Catch2WithMain)
