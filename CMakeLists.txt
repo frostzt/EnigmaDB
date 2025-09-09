@@ -10,7 +10,8 @@ include(FetchContent)
 # deps
 FetchContent_Declare(spdlog GIT_REPOSITORY https://github.com/gabime/spdlog.git GIT_TAG v1.15.3)
 FetchContent_Declare(Catch2 GIT_REPOSITORY https://github.com/catchorg/Catch2.git GIT_TAG v3.8.1)
-FetchContent_MakeAvailable(spdlog Catch2)
+FetchContent_Declare(liburing GIT_REPOSITORY https://github.com/axboe/liburing)
+FetchContent_MakeAvailable(spdlog Catch2 liburing)
 
 add_subdirectory(external/lz4/build/cmake lz4-build)
 
@@ -109,5 +110,7 @@ add_executable(tests
         tests/utils/vint/test_varint_encode.cpp
         tests/utils/test_byte_parser.cpp
         tests/utils/test_byte_utils_entry.cpp
+        tests/sandbox.cpp
 )
+
 target_link_libraries(tests PRIVATE enigma_core Catch2::Catch2WithMain)
