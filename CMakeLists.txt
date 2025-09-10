@@ -30,6 +30,7 @@ else()
     set(USE_LIBURING OFF)
 endif ()
 
+# Arch
 if(MSVC)
     add_compile_options(/arch:AVX2)
 else()
@@ -38,6 +39,8 @@ endif()
 
 # libs
 add_library(enigma_core
+        lib/io/linux/linux_io_engine.cpp
+        lib/io/linux/linux_io_engine.hpp
         lib/abstract/avl.hpp
         lib/entry/entry.hpp
         lib/entry/entry.cpp

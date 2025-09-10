@@ -5,10 +5,6 @@
 #include <iomanip>
 #include <sys/stat.h>
 
-#ifdef HAS_LIBURING
-#include <liburing.h>
-#endif
-
 #include "wal_writer.hpp"
 #include "wal_codec.hpp"
 
