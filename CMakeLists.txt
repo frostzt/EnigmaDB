@@ -39,8 +39,6 @@ endif()
 
 # libs
 add_library(enigma_core
-        lib/io/linux/linux_io_engine.cpp
-        lib/io/linux/linux_io_engine.hpp
         lib/abstract/avl.hpp
         lib/entry/entry.hpp
         lib/entry/entry.cpp
@@ -88,6 +86,12 @@ add_library(enigma_core
         lib/compression/lz_4_compressor.hpp
         lib/compression/noop_compressor.hpp
         lib/utils/vint/vint.hpp
+        lib/io/engine.hpp
+        lib/io/types.hpp
+        lib/io/linux/uring_io_engine.cpp
+        lib/io/linux/uring_io_engine.hpp
+        lib/io/posix_engine.cpp
+        lib/io/posix_engine.hpp
 )
 
 target_include_directories(enigma_core PUBLIC .)
