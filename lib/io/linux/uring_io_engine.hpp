@@ -5,12 +5,7 @@
 #ifndef ENIGMA_DB_URING_IO_ENGINE_HPP
 #define ENIGMA_DB_URING_IO_ENGINE_HPP
 
-
-
-class uring_io_engine {
-
-};
-
-
+#ifndef USE_LIBURING
+#endif //USE_LIBURING
 
 #endif //ENIGMA_DB_URING_IO_ENGINE_HPP

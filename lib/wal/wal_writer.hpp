@@ -14,6 +14,7 @@
 
 #include "wal_codec.hpp"
 #include "lib/entry/entry.hpp"
+#include "lib/io/engine.hpp"
 
 namespace WAL {
     class WALWriter {
@@ -26,6 +27,12 @@ namespace WAL {
 
         /** Current file ofstream */
         std::ofstream currentOutStream_;
+
+        /** IO Engine */
+        io_engine::IoEngine& engine_;
+
+        /** Currently active segment */
+        io_engine::SegmentHandle seg_;
 
         /** Max file byte size to be stored */
         size_t maxFileSize_;
@@ -76,9 +83,7 @@ namespace WAL {
 
         bool init() {
             this->currentFileNumber_ = 1;
-            const std::string filePath = this->filePath(this->currentFileNumber_);
-            this->currentOutStream_.open(filePath, std::ios::out | std::ios::app | std::ios::binary);
-            if (!this->currentOutStream_.good()) return false;
+            this->seg_ = this->engine_.openSegment("wal", std::string_view(std::to_string(this->currentFileNumber_)));
 
             return true;
         }
